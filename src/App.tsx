@@ -3,6 +3,7 @@ import './App.css';
 import { LeafletMap } from './components/LeafletMap';
 
 import L from 'leaflet';
+import 'leaflet-gpx';
 
 import 'leaflet/dist/leaflet.css';
 
@@ -18,7 +19,7 @@ delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: marker2x,
     iconUrl: marker,
-    shadowUrl: markerShadow
+    shadowUrl: markerShadow,
 });
 
 const App: React.FC = () => {
