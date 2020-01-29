@@ -4,6 +4,7 @@ import { LatLngExpression } from 'leaflet';
 
 import './LeafletMap.scss';
 import { GpxLoader } from './GpxLoader';
+import { TrackDrawer } from './TrackDrawer/TrackDrawer';
 
 export const LeafletMap: React.FC = () => {
     const [position] = useState<LatLngExpression>({
@@ -32,6 +33,7 @@ export const LeafletMap: React.FC = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
+                <TrackDrawer />
                 <GpxLoader />
                 <Marker position={position}>
                     <Popup>

@@ -2,6 +2,7 @@ import React, { useLayoutEffect } from 'react'
 import { useLeaflet } from 'react-leaflet';
 
 import L, { LeafletEvent, GPXOptions } from 'leaflet';
+import 'leaflet-gpx';
 
 import pinIconStart from 'leaflet-gpx/pin-icon-start.png';
 import pinIconEnd from 'leaflet-gpx/pin-icon-end.png';
