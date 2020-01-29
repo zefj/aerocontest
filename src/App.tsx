@@ -10,6 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css'; 
 
 import { LeafletMap } from './components/LeafletMap';
+import { Control } from './components/Control/Control';
 
 // stupid hack so that leaflet's images work after going through webpack
 // https://github.com/PaulLeCam/react-leaflet/issues/255#issuecomment-388492108
@@ -30,6 +31,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
         <LeafletMap />
+        <Control />
     </div>
   );
 };
