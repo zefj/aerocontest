@@ -17,6 +17,10 @@ import { Control } from './components/Control/Control';
 import marker from 'leaflet/dist/images/marker-icon.png';
 import marker2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { gpxRouteContext } from './state/gpxRouteContext';
+import { useGpxRouteData } from './hooks/useGpxRouteData';
+import { useTrackData } from './hooks/useTrackData';
+import { trackContext } from './state/trackContext';
 
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl;
@@ -28,10 +32,18 @@ L.Icon.Default.mergeOptions({
 });
 
 const App: React.FC = () => {
+  const gpxRouteData = useGpxRouteData();
+  const trackData = useTrackData();
+
+  // todo: https://stackoverflow.com/questions/59743050/react-leaflet-placing-map-control-components-outside-of-map
   return (
     <div className="App">
-        <LeafletMap />
-        <Control />
+      <gpxRouteContext.Provider value={gpxRouteData}>
+        <trackContext.Provider value={trackData}>
+          <LeafletMap />
+          <Control />
+        </trackContext.Provider>
+      </gpxRouteContext.Provider>
     </div>
   );
 };

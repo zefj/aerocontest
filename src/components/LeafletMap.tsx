@@ -5,6 +5,7 @@ import { LatLngExpression } from 'leaflet';
 import './LeafletMap.scss';
 import { GpxLoader } from './GpxLoader';
 import { TrackDrawer } from './TrackDrawer/TrackDrawer';
+import { RouteAnalyser } from './RouteAnalyser/RouteAnalyser';
 
 export const LeafletMap: React.FC = () => {
     const [position] = useState<LatLngExpression>({
@@ -35,6 +36,8 @@ export const LeafletMap: React.FC = () => {
 
                 <TrackDrawer />
                 <GpxLoader />
+                <RouteAnalyser />
+
                 <Marker position={position}>
                     <Popup>
                         A pretty CSS3 popup. <br /> Easily customizable.

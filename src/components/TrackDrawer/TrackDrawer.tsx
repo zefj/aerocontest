@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useLeaflet } from 'react-leaflet';
 
 import L, { Control, DrawEvents } from 'leaflet';
 
 import 'leaflet-draw';
+import { trackContext } from '../../state/trackContext';
 
-const editableLayers = new L.FeatureGroup();
+const track = new L.FeatureGroup();
 
 const options: Control.DrawConstructorOptions = {
     position: 'topright',
@@ -15,32 +16,40 @@ const options: Control.DrawConstructorOptions = {
         circlemarker: false,
     },
     edit: {
-        featureGroup: editableLayers,
+        featureGroup: track,
     }
 };
 
 const drawControl = new L.Control.Draw(options);
 
 export const TrackDrawer: React.FC = () => {
-    const context = useLeaflet();
+    const { map } = useLeaflet();
+    const { setTrack } = useContext(trackContext);
 
     useEffect(() => {
-        if (!context.map) {
+        if (!map) {
             return;
         }
 
-        context.map.addControl(drawControl);
-        context.map.addLayer(editableLayers);
+        setTrack(track);
+        map.addControl(drawControl);
+        map.addLayer(track);
+    }, [map]);
 
-        context.map.on(L.Draw.Event.CREATED, (e: any) => {
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        map.on(L.Draw.Event.CREATED, (e: any) => {
             // The event is actually DrawEvents.Created, but there is no matching definition for the `on` method,
             // which makes typescript complain about no matching overload. TODO I guess?
             const event: DrawEvents.Created = e;
             const layer = event.layer;
         
-            editableLayers.addLayer(layer);
+            track.addLayer(layer);
         });
-    }, [context.map]);
-    
+    }, [map]);
+
     return null;
 };

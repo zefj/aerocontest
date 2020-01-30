@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useLeaflet } from 'react-leaflet';
 
 import L, { LeafletEvent, GPXOptions } from 'leaflet';
@@ -7,6 +7,7 @@ import 'leaflet-gpx';
 import pinIconStart from 'leaflet-gpx/pin-icon-start.png';
 import pinIconEnd from 'leaflet-gpx/pin-icon-end.png';
 import pinShadow from 'leaflet-gpx/pin-shadow.png';
+import { gpxRouteContext } from '../state/gpxRouteContext';
 
 const testGpxContent = require('../test-data/13_paź_2019_09_06_10_1570956876047.gpx');
 
@@ -24,25 +25,42 @@ const options: GPXOptions = {
         startIconUrl: pinIconStart,
         endIconUrl: pinIconEnd,
         shadowUrl: pinShadow
+    },
+    polyline_options: {
+        color: '#CB0606'
     }
 };
 
 export const GpxLoader: React.FC = () => {
-    const context = useLeaflet();
+    const { map } = useLeaflet();
+    const { routeRaw, setRouteRaw, setRoute } = useContext(gpxRouteContext);
 
-    useLayoutEffect(() => {
-        if (!context.map) {
+    useEffect(() => {
+        setRouteRaw(testGpxContent);
+    }, []);
+
+    useEffect(() => {
+        if (!map) {
             return;
         }
 
-        new L.GPX(testGpxContent, options).on('loaded', (e: LeafletEvent) => {
-            if (!context.map) {
+        if (!routeRaw) {
+            return;
+        }
+
+        const gpx = new L.GPX(routeRaw, options).on('loaded', (e: LeafletEvent) => {
+            if (!map) {
                 return;
             }
     
-            context.map.fitBounds(e.target.getBounds());
-        }).addTo(context.map);
-    }, [context.map]);
+            setRoute(e.target);
+
+            // Get all layers created from the GPX data. One of those is instanceof L.Polyline
+            // e.target.getLayers()[0].getLayers()
+
+            map.fitBounds(e.target.getBounds());
+        }).addTo(map);
+    }, [map, routeRaw]);
 
     return null;
 };

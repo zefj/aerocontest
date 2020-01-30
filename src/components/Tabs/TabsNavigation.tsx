@@ -10,7 +10,8 @@ export const TabsNavigation = <T extends TabIndex>({
         <nav className="w-full flex text-center bg-yellow-400">
             {
                 tabs.map((tab) => (
-                    <button 
+                    <button
+                        key={`tab-nav-${tab.index}`} 
                         className={classNames(
                             'flex-auto p-3 text-sm cursor-pointer text-gray-700 hover:bg-yellow-500 border-b-4 border-solid border-yellow-500',
                             {
