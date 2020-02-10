@@ -1,34 +1,19 @@
 import React, { useContext, useEffect } from 'react';
 import { gpxRouteContext } from '../../state/gpxRouteContext';
 import { useLeaflet } from 'react-leaflet';
-import L, { GPX, LayerEvent, Layer } from 'leaflet';
+import L, { LayerEvent, LatLng } from 'leaflet';
 
-import lineSplit, { Splitter } from '@turf/line-split';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import circle from '@turf/circle';
-import { lineString, point, GeometryCollection, FeatureCollection, Geometry, Feature, MultiPoint, LineString, MultiLineString, Polygon } from '@turf/helpers';
+import { point } from '@turf/helpers';
 import { trackContext } from '../../state/trackContext';
-
-
-const getPolylineLayer = (route: GPX): L.Polyline | null => {
-    // Types seem to be incorrect, route.getLayers()[0] is instanceof L.FeatureGroup
-    const layers = (route.getLayers()[0] as L.FeatureGroup).getLayers();
-
-    for (let layer of layers) {
-        if (!(layer instanceof L.Polyline)) {
-            continue;
-        }
-
-        return layer;
-    }
-
-    return null;
-};
-
-var lineStyle = {
-    color: "#06CB13",
-    weight: 4,
-};
+import { getPolylineLayer } from '../../utils/getPolylineLayer';
+import {
+    OFFTRACK_POINT_TOOLTIP_OPTIONS,
+    ROUTE_LINE_STYLE,
+    ROUTE_LINE_STYLE_OFFTRACK,
+    ROUTE_LINE_STYLE_ONTRACK
+} from '../leafletElementStyles';
 
 const splitGroup = new L.LayerGroup();
 
@@ -46,39 +31,121 @@ const polygonToGeoJSON = (polygon: L.Layer) => {
     throw new Error('Could not transform polygon to geojson data, unknown Layer type.');
 };
 
-/**
- * Credit: https://bl.ocks.org/rveciana/e0565ca3bfcebedb12bbc2d4edb9b6b3
- * TODO: figure out a more descriptive name
- */
-const handleUpdate = (
-    polyline: Feature<LineString | MultiLineString, any>,
+type PointAnalysis = {
+    state: 'offtrack' | 'ontrack',
+    point: GPXLatLng
+};
+
+type RouteAnalysis = PointAnalysis[];
+
+const performRouteAnalysis = (
+    routePolyline: L.Polyline,
     track: L.FeatureGroup,
-    map: L.Map,
-) => {
-    splitGroup.clearLayers();
+): RouteAnalysis => {
+    const analysis: RouteAnalysis = [];
 
-    // const polygons = track.toGeoJSON() as FeatureCollection;
+    routePolyline.getLatLngs().forEach((routePoint: LatLng | LatLng[] | LatLng[][]) => {
+        const p = routePoint as GPXLatLng;
+        const pointFeature = point([p.lng, p.lat]);
 
-    track.getLayers().forEach((polygon: L.Layer) => {
-        const geoJsonPolygon = polygonToGeoJSON(polygon);
+        for (let polygon of track.getLayers()) {
+            const geoJsonPolygon = polygonToGeoJSON(polygon);
 
-        let split = lineSplit(polyline as any, geoJsonPolygon as any);
+            if (booleanPointInPolygon(pointFeature, geoJsonPolygon as any)) {
+                analysis.push({
+                    state: 'ontrack',
+                    point: p,
+                });
 
-        let oddPair: number;
-        // TODO: Leaflet types are very inaccurate, fix the any casts
-        if (booleanPointInPolygon(point(polyline.geometry.coordinates[0] as any), geoJsonPolygon as any)) {
-            oddPair = 0;
-        } else {
-            oddPair = 1;
+                return;
+            }
         }
 
-        // Note: this will add overlaying lines in case there are overlapping polygons. If this happens to be an issue, 
-        // find a way to merge polygons, or lines.
-        split.features.forEach((splittedPart, i) => {
-            if ((i + oddPair) % 2 === 0) {
-                L.geoJSON(splittedPart.geometry, { style: lineStyle }).addTo(splitGroup);
-            }
+        analysis.push({
+            state: 'offtrack',
+            point: p,
         });
+    });
+
+    return analysis;
+};
+
+interface GPXLatLng extends LatLng {
+    meta: {
+        time: Date,
+    }
+}
+
+type OfftrackFragments = GPXLatLng[][];
+
+const getOfftrackFragments = (analysis: RouteAnalysis): OfftrackFragments => {
+    const fragments: OfftrackFragments = [];
+
+    analysis.forEach((pointAnalysis, i) => {
+        let fragment = fragments.length ? fragments[fragments.length - 1] : [];
+
+        if (pointAnalysis.state === 'offtrack') {
+            // Start a new fragment when crossing a polygon boundary
+            // This is to ensure correct behaviour when there are polygons that do not overlap
+            if (!analysis[i - 1] || analysis[i - 1].state === 'ontrack') {
+                fragment = [];
+                fragments.push(fragment);
+            }
+
+            return fragment.push(pointAnalysis.point);
+        }
+    });
+
+    return fragments;
+};
+
+const analyze = (
+    route: L.GPX,
+    track: L.FeatureGroup,
+): void => {
+    const polylineLayer = getPolylineLayer(route);
+
+    if (!polylineLayer) {
+        throw new Error('Polyline layer not found in route.');
+    }
+
+    const analysis = performRouteAnalysis(polylineLayer, track);
+
+    let offrouteFragments: OfftrackFragments = [];
+
+    if (track.getLayers().length !== 0) {
+        polylineLayer.setStyle(ROUTE_LINE_STYLE_ONTRACK);
+        offrouteFragments = getOfftrackFragments(analysis);
+    } else {
+        // There are no offtracks without tracks, reset the route line style to neutral
+        polylineLayer.setStyle(ROUTE_LINE_STYLE);
+    }
+
+    drawOfftrackFragments(offrouteFragments);
+};
+
+const offrouteStartEndMarkers = new L.LayerGroup();
+
+const drawOfftrackFragments = (offrouteFragments: OfftrackFragments) => {
+    offrouteStartEndMarkers.clearLayers();
+
+    offrouteFragments.forEach((fragment) => {
+        if (fragment.length < 2) {
+            return;
+        }
+
+        const exitPoint = fragment[0];
+        const entryPoint = fragment[fragment.length - 1];
+
+        L.marker([exitPoint.lat, exitPoint.lng])
+            .addTo(offrouteStartEndMarkers)
+            .bindTooltip(exitPoint.meta.time.toString(), OFFTRACK_POINT_TOOLTIP_OPTIONS);
+
+        L.marker([entryPoint.lat, entryPoint.lng])
+            .addTo(offrouteStartEndMarkers)
+            .bindTooltip(entryPoint.meta.time.toString(), OFFTRACK_POINT_TOOLTIP_OPTIONS);
+
+        L.polyline(offrouteFragments, ROUTE_LINE_STYLE_OFFTRACK).addTo(offrouteStartEndMarkers);
     });
 };
 
@@ -101,18 +168,13 @@ export const RouteAnalyser: React.FC = () => {
         }
 
         map.addLayer(splitGroup);
+        map.addLayer(offrouteStartEndMarkers);
+        // Run initial analysis
+        analyze(route, track);
 
-        const polylineLayer = getPolylineLayer(route);
-
-        if (!polylineLayer) {
-            throw new Error('Polyline layer not found.');
-        }
-
-        const polyline = polylineLayer.toGeoJSON();
-
-        track.on('layeradd layerremove', (e: LayerEvent) => handleUpdate(polyline, track, map));
-        // TODO: figure out if this event can be fired on track 
-        map.on(L.Draw.Event.EDITED, (e: LayerEvent) => handleUpdate(polyline, track, map));
+        track.on('layeradd layerremove', (e: LayerEvent) => analyze(route, track));
+        // TODO: figure out if this event can be fired on track
+        map.on(L.Draw.Event.EDITED, (e: LayerEvent) => analyze(route, track));
     }, [map, route, track]);
 
     return null;
