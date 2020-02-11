@@ -7,18 +7,17 @@ import 'leaflet-gpx';
 import pinIconStart from 'leaflet-gpx/pin-icon-start.png';
 import pinIconEnd from 'leaflet-gpx/pin-icon-end.png';
 import pinShadow from 'leaflet-gpx/pin-shadow.png';
-import { gpxRouteContext } from '../state/gpxRouteContext';
-import { getPolylineLayer } from '../utils/getPolylineLayer';
+import { Route } from '../state/routesContext';
 import { ROUTE_LINE_STYLE } from './leafletElementStyles';
+import { useRoutes } from '../hooks/useRoutes';
 
-// const testGpxContent = require('../test-data/13_paź_2019_09_06_10_1570956876047.gpx');
-const testGpxContent = require('../test-data/route-1.gpx');
+const route1content = require('../test-data/13_paź_2019_09_06_10_1570956876047.gpx');
+const route2content = require('../test-data/29_gru_2019_13_17_57_rec.gpx');
 
 /**
  * ts-ignore's because the modules released on npm are outdated
  */
 const options: GPXOptions = {
-    async: true,
     gpx_options: {
         // @ts-ignore
         joinTrackSegments: true
@@ -32,12 +31,26 @@ const options: GPXOptions = {
     polyline_options: ROUTE_LINE_STYLE
 };
 
+// TODO: consider moving to utils if needed elsewhere
+const composeBounds = (routes: Route[]) => routes.reduce((carry: L.LatLngBounds | null, current: Route) => {
+    if (!current.gpx) {
+        return carry;
+    }
+
+    if (carry) {
+        return carry.extend(current.gpx.getBounds());
+    }
+
+    return current.gpx.getBounds();
+}, null);
+
 export const GpxLoader: React.FC = () => {
     const { map } = useLeaflet();
-    const { routeRaw, setRouteRaw, setRoute } = useContext(gpxRouteContext);
+    const { routes, addRoute, routeParsed } = useRoutes();
 
     useEffect(() => {
-        setRouteRaw(testGpxContent);
+        addRoute('Route 1', route1content);
+        addRoute('Route 2', route2content);
     }, []);
 
     useEffect(() => {
@@ -45,27 +58,32 @@ export const GpxLoader: React.FC = () => {
             return;
         }
 
-        if (!routeRaw) {
+        if (!routes) {
             return;
         }
 
-        new L.GPX(routeRaw, options).on('loaded', (e: LeafletEvent) => {
-            if (!map) {
+        routes.forEach((route: Route) => {
+            if (route.gpx) {
                 return;
             }
 
-            setRoute(e.target);
+            const gpx = new L.GPX(route.content, options);
 
-            // Get all layers created from the GPX data. One of those is instanceof L.Polyline
-            const polylineLayer = getPolylineLayer(e.target);
+            routeParsed(route.name, gpx);
 
-            if (!polylineLayer) {
-                return;
-            }
+            gpx.addTo(map);
+            // TODO: Would it be better if this was added to the map elsewhere, maybe by the route analyser?
+            route.offrouteFragmentsLayer.addTo(map);
+            route.offrouteMarkersLayer.addTo(map);
+        });
 
-            map.fitBounds(e.target.getBounds());
-        }).addTo(map);
-    }, [map, routeRaw]);
+        // This is probably only temporary so I don't have to pan the map on each refresh
+        const bounds = composeBounds(routes);
+
+        if (bounds) {
+            map.fitBounds(bounds);
+        }
+    }, [map, routes]);
 
     return null;
 };

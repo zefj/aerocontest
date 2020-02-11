@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { gpxRouteContext } from '../../state/gpxRouteContext';
+import { Route } from '../../state/routesContext';
 import { useLeaflet } from 'react-leaflet';
 import L, { LayerEvent, LatLng } from 'leaflet';
 
@@ -14,8 +14,7 @@ import {
     ROUTE_LINE_STYLE_OFFTRACK,
     ROUTE_LINE_STYLE_ONTRACK
 } from '../leafletElementStyles';
-
-const splitGroup = new L.LayerGroup();
+import { useRoutes } from '../../hooks/useRoutes';
 
 const polygonToGeoJSON = (polygon: L.Layer) => {
     if (polygon instanceof L.Circle) {
@@ -78,7 +77,7 @@ interface GPXLatLng extends LatLng {
 
 type OfftrackFragments = GPXLatLng[][];
 
-const getOfftrackFragments = (analysis: RouteAnalysis): OfftrackFragments => {
+const analyseRoutePoints = (analysis: RouteAnalysis): OfftrackFragments => {
     const fragments: OfftrackFragments = [];
 
     analysis.forEach((pointAnalysis, i) => {
@@ -99,35 +98,40 @@ const getOfftrackFragments = (analysis: RouteAnalysis): OfftrackFragments => {
     return fragments;
 };
 
-const analyze = (
-    route: L.GPX,
+const analyse = (
+    routes: Route[],
     track: L.FeatureGroup,
 ): void => {
-    const polylineLayer = getPolylineLayer(route);
+    routes.forEach((route) => {
+        if (!route.gpx) {
+            return;
+        }
 
-    if (!polylineLayer) {
-        throw new Error('Polyline layer not found in route.');
-    }
+        const polylineLayer = getPolylineLayer(route.gpx);
 
-    const analysis = performRouteAnalysis(polylineLayer, track);
+        if (!polylineLayer) {
+            throw new Error('Polyline layer not found in route.');
+        }
 
-    let offrouteFragments: OfftrackFragments = [];
+        const analysis = performRouteAnalysis(polylineLayer, track);
 
-    if (track.getLayers().length !== 0) {
-        polylineLayer.setStyle(ROUTE_LINE_STYLE_ONTRACK);
-        offrouteFragments = getOfftrackFragments(analysis);
-    } else {
-        // There are no offtracks without tracks, reset the route line style to neutral
-        polylineLayer.setStyle(ROUTE_LINE_STYLE);
-    }
+        let offrouteFragments: OfftrackFragments = [];
 
-    drawOfftrackFragments(offrouteFragments);
+        if (track.getLayers().length !== 0) {
+            polylineLayer.setStyle(ROUTE_LINE_STYLE_ONTRACK);
+            offrouteFragments = analyseRoutePoints(analysis);
+        } else {
+            // There are no offtracks without tracks, reset the route line style to neutral
+            polylineLayer.setStyle(ROUTE_LINE_STYLE);
+        }
+
+        drawOfftrackElements(route, offrouteFragments);
+    });
 };
 
-const offrouteStartEndMarkers = new L.LayerGroup();
-
-const drawOfftrackFragments = (offrouteFragments: OfftrackFragments) => {
-    offrouteStartEndMarkers.clearLayers();
+const drawOfftrackElements = (route: Route, offrouteFragments: OfftrackFragments) => {
+    route.offrouteMarkersLayer.clearLayers();
+    route.offrouteFragmentsLayer.clearLayers();
 
     offrouteFragments.forEach((fragment) => {
         if (fragment.length < 2) {
@@ -138,28 +142,28 @@ const drawOfftrackFragments = (offrouteFragments: OfftrackFragments) => {
         const entryPoint = fragment[fragment.length - 1];
 
         L.marker([exitPoint.lat, exitPoint.lng])
-            .addTo(offrouteStartEndMarkers)
+            .addTo(route.offrouteMarkersLayer)
             .bindTooltip(exitPoint.meta.time.toString(), OFFTRACK_POINT_TOOLTIP_OPTIONS);
 
         L.marker([entryPoint.lat, entryPoint.lng])
-            .addTo(offrouteStartEndMarkers)
+            .addTo(route.offrouteMarkersLayer)
             .bindTooltip(entryPoint.meta.time.toString(), OFFTRACK_POINT_TOOLTIP_OPTIONS);
 
-        L.polyline(offrouteFragments, ROUTE_LINE_STYLE_OFFTRACK).addTo(offrouteStartEndMarkers);
+        L.polyline(offrouteFragments, ROUTE_LINE_STYLE_OFFTRACK).addTo(route.offrouteFragmentsLayer);
     });
 };
 
 export const RouteAnalyser: React.FC = () => {
     const { map } = useLeaflet();
-    const { route } = useContext(gpxRouteContext);
     const { track } = useContext(trackContext);
+    const { routes } = useRoutes();
 
     useEffect(() => {
         if (!map) {
             return;
         }
 
-        if (!route) {
+        if (!routes.length) {
             return;
         }
 
@@ -167,15 +171,13 @@ export const RouteAnalyser: React.FC = () => {
             return;
         }
 
-        map.addLayer(splitGroup);
-        map.addLayer(offrouteStartEndMarkers);
         // Run initial analysis
-        analyze(route, track);
+        analyse(routes, track);
 
-        track.on('layeradd layerremove', (e: LayerEvent) => analyze(route, track));
+        track.on('layeradd layerremove', (e: LayerEvent) => analyse(routes, track));
         // TODO: figure out if this event can be fired on track
-        map.on(L.Draw.Event.EDITED, (e: LayerEvent) => analyze(route, track));
-    }, [map, route, track]);
+        map.on(L.Draw.Event.EDITED, (e: LayerEvent) => analyse(routes, track));
+    }, [map, routes, track]);
 
     return null;
 };

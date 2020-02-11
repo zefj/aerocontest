@@ -7,7 +7,7 @@ import L from 'leaflet';
 // TODO: try to import css from within scss to see if the order is preserved.
 import 'leaflet/dist/leaflet.css';
 // This should be part of the TrackDrawer component, but webpack/cra config is refusing to cooperate.
-import 'leaflet-draw/dist/leaflet.draw.css'; 
+import 'leaflet-draw/dist/leaflet.draw.css';
 
 import { LeafletMap } from './components/LeafletMap';
 import { Control } from './components/Control/Control';
@@ -17,8 +17,7 @@ import { Control } from './components/Control/Control';
 import marker from 'leaflet/dist/images/marker-icon.png';
 import marker2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { gpxRouteContext } from './state/gpxRouteContext';
-import { useGpxRouteData } from './hooks/useGpxRouteData';
+import { routesContext, useRoutesDataProvider } from './state/routesContext';
 import { useTrackData } from './hooks/useTrackData';
 import { trackContext } from './state/trackContext';
 
@@ -32,20 +31,21 @@ L.Icon.Default.mergeOptions({
 });
 
 const App: React.FC = () => {
-  const gpxRouteData = useGpxRouteData();
-  const trackData = useTrackData();
+    const trackData = useTrackData();
 
-  // todo: https://stackoverflow.com/questions/59743050/react-leaflet-placing-map-control-components-outside-of-map
-  return (
-    <div className="App">
-      <gpxRouteContext.Provider value={gpxRouteData}>
-        <trackContext.Provider value={trackData}>
-          <LeafletMap />
-          <Control />
-        </trackContext.Provider>
-      </gpxRouteContext.Provider>
-    </div>
-  );
+    const routesData = useRoutesDataProvider();
+
+    // todo: https://stackoverflow.com/questions/59743050/react-leaflet-placing-map-control-components-outside-of-map
+    return (
+        <div className="App">
+            <routesContext.Provider value={routesData}>
+                <trackContext.Provider value={trackData}>
+                    <LeafletMap/>
+                    <Control/>
+                </trackContext.Provider>
+            </routesContext.Provider>
+        </div>
+    );
 };
 
 export default App;

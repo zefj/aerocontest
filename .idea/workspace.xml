@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="Rewrite RouteAnalyser&#10;&#10;From now on, we perform route analysis using GPX track points and &#10;`@turf/boolean-point-in-polygon`, instead of relying on &#10;`@turf/line-split`, which in turn relied heavily on the GeoJSON spec. &#10;This approach gives us a very convenient way of extrating the offroute &#10;start/end points, as well as an easy access to track point metadata.">
-      <change afterPath="$PROJECT_DIR$/src/components/leafletElementStyles.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test-data/route-1.gpx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/getPolylineLayer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/GpxLoader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/GpxLoader.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/RouteAnalyser/RouteAnalyser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteAnalyser/RouteAnalyser.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test-data/13_paź_2019_09_06_10_1570956876047.gpx" beforeDir="false" afterPath="$PROJECT_DIR$/src/test-data/13_paź_2019_09_06_10_1570956876047.gpx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+    <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="Redo">
+      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/TrackDrawer/TrackDrawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TrackDrawer/TrackDrawer.tsx" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,12 +34,13 @@
     <property name="ts.external.directory.path" value="C:\Users\filip\code\aerocontest\node_modules\typescript\lib" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\filip\code\aerocontest\src\test-data" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\filip\code\aerocontest\src\test-data" />
       <recent name="C:\Users\filip\code\aerocontest\src" />
       <recent name="C:\Users\filip\gpx" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\filip\code\aerocontest\src\test-data" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -83,8 +75,24 @@
       <workItem from="1574100129356" duration="434000" />
       <workItem from="1575814917378" duration="4674000" />
       <workItem from="1580133478158" duration="143000" />
-      <workItem from="1581353844921" duration="11383000" />
+      <workItem from="1581353844921" duration="12089000" />
+      <workItem from="1581442332257" duration="9054000" />
     </task>
+    <task id="LOCAL-00001" summary="Rewrite RouteAnalyser&#10;&#10;From now on, we perform route analysis using GPX track points and &#10;`@turf/boolean-point-in-polygon`, instead of relying on &#10;`@turf/line-split`, which in turn relied heavily on the GeoJSON spec. &#10;This approach gives us a very convenient way of extrating the offroute &#10;start/end points, as well as an easy access to track point metadata.">
+      <created>1581365291058</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1581365291058</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Redo routes context, loader and analyser to handle multiple tracks">
+      <created>1581451716973</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1581451716973</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -104,8 +112,11 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
     <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="true" />
     <MESSAGE value="Rewrite RouteAnalyser&#10;&#10;From now on, we perform route analysis using GPX track points and &#10;`@turf/boolean-point-in-polygon`, instead of relying on &#10;`@turf/line-split`, which in turn relied heavily on the GeoJSON spec. &#10;This approach gives us a very convenient way of extrating the offroute &#10;start/end points, as well as an easy access to track point metadata." />
-    <option name="LAST_COMMIT_MESSAGE" value="Rewrite RouteAnalyser&#10;&#10;From now on, we perform route analysis using GPX track points and &#10;`@turf/boolean-point-in-polygon`, instead of relying on &#10;`@turf/line-split`, which in turn relied heavily on the GeoJSON spec. &#10;This approach gives us a very convenient way of extrating the offroute &#10;start/end points, as well as an easy access to track point metadata." />
+    <MESSAGE value="Redo routes context, loader and analyser to handle multiple tracks" />
+    <option name="LAST_COMMIT_MESSAGE" value="Redo routes context, loader and analyser to handle multiple tracks" />
   </component>
 </project>

@@ -18,17 +18,15 @@ const tabs: Tab<ControlTabs>[] = [
 
 export const Control: React.FC = () => {
     const [tab, setTab] = useTabs<ControlTabs>('route');
-    
+
     return (
         <div className="absolute z-400 h-full p-4 w-1/4">
             <div className="flex flex-col bg-white h-full rounded shadow-lg overflow-hidden">
-
                 <TabsNavigation tabs={tabs} active={tab} setTab={setTab} />
 
                 { tab === 'route' && (
                     <RouteTab />
                 ) }
-
 
                 { tab === 'track' && (
                     <div className="px-6 py-4 overflow-auto">
@@ -42,7 +40,6 @@ export const Control: React.FC = () => {
                         </p>
                     </div>
                 ) }
-
 
             </div>
         </div>

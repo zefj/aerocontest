@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { gpxRouteContext } from '../../state/gpxRouteContext';
+import React from 'react';
 import { GPX } from 'leaflet';
+import { useRoutes } from '../../hooks/useRoutes';
 
 type RouteDataProps = {
     route: GPX,
@@ -95,15 +95,23 @@ const RouteData: React.FC<RouteDataProps> = ({ route }) => {
 };
 
 export const RouteTab: React.FC = () => {
-    const { route, routeRaw } = useContext(gpxRouteContext);
+    const { routes } = useRoutes();
 
     return (
         <div className="px-6 py-4 overflow-auto">
-            { routeRaw && (
-                <span>trasa zaladowana</span>
-            )}
+            {routes.map((route) => (
+                <div className="mb-2">
+                    <div className="font-bold text-xl mb-2">{route.name}</div>
 
-            { (route !== null) && <RouteData route={route} />}
+                    {!route.gpx && (
+                        <span>Ładowanie trasy...</span>
+                    )}
+
+                    {route.gpx && (
+                        <RouteData route={route.gpx} />
+                    )}
+                </div>
+            ))}
         </div>
     );
 };
