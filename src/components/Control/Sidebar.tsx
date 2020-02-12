@@ -3,6 +3,8 @@ import { useTabs } from '../Tabs/useTabs';
 import { TabsNavigation } from '../Tabs/TabsNavigation';
 import { RouteTab } from '../RouteTab/RouteTab';
 
+import './sidebar.css';
+
 type ControlTabs = 'route' | 'track';
 
 const tabs: Tab<ControlTabs>[] = [
@@ -16,11 +18,11 @@ const tabs: Tab<ControlTabs>[] = [
     }
 ];
 
-export const Control: React.FC = () => {
+export const Sidebar: React.FC = () => {
     const [tab, setTab] = useTabs<ControlTabs>('route');
 
     return (
-        <div className="absolute z-400 h-full p-4 w-1/4">
+        <div className="sidebar absolute z-500 h-full">
             <div className="flex flex-col bg-white h-full rounded shadow-lg overflow-hidden">
                 <TabsNavigation tabs={tabs} active={tab} setTab={setTab} />
 

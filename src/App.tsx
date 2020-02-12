@@ -10,7 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
 import { LeafletMap } from './components/LeafletMap';
-import { Control } from './components/Control/Control';
+import { Sidebar } from './components/Control/Sidebar';
 
 // stupid hack so that leaflet's images work after going through webpack
 // https://github.com/PaulLeCam/react-leaflet/issues/255#issuecomment-388492108
@@ -40,8 +40,9 @@ const App: React.FC = () => {
         <div className="App">
             <routesContext.Provider value={routesData}>
                 <trackContext.Provider value={trackData}>
-                    <LeafletMap/>
-                    <Control/>
+                    {/* TODO: do it like this: https://turbo87.github.io/sidebar-v2/examples/ */}
+                    <Sidebar />
+                    <LeafletMap />
                 </trackContext.Provider>
             </routesContext.Provider>
         </div>

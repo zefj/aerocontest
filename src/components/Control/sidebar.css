@@ -1,0 +1,8 @@
+.sidebar {
+    width: 450px;
+    padding: 10px 0 0 10px;
+}
+
+.sidebar ~ .map-container .leaflet-left {
+    left: 450px;
+}

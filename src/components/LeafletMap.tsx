@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Map, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet'
+import { Map, TileLayer, ZoomControl, ScaleControl } from 'react-leaflet'
 import { LatLngExpression } from 'leaflet';
 
 import './LeafletMap.scss';
@@ -33,17 +33,13 @@ export const LeafletMap: React.FC = () => {
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <ZoomControl position="topright" />
+                <ZoomControl position="topleft" />
+                <ScaleControl position="bottomright" imperial={false} />
 
-                <TrackDrawer />
                 <GpxLoader />
+                <TrackDrawer drawingMode={true} />
                 <RouteAnalyser />
 
-                <Marker position={position}>
-                    <Popup>
-                        A pretty CSS3 popup. <br /> Easily customizable.
-                    </Popup>
-                </Marker>
             </Map>
         </div>
     )

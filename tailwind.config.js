@@ -2,10 +2,10 @@ module.exports = {
   theme: {
     extend: {
       zIndex: {
-        '400': 400,
-      }
+        '500': 500,
+      },
     },
   },
   variants: {},
   plugins: []
-}
+};

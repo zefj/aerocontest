@@ -9,7 +9,7 @@ import { trackContext } from '../../state/trackContext';
 const track = new L.FeatureGroup();
 
 const options: Control.DrawConstructorOptions = {
-    position: 'topright',
+    position: 'topleft',
     draw: {
         polyline: false,
         marker: false,
@@ -22,7 +22,11 @@ const options: Control.DrawConstructorOptions = {
 
 const drawControl = new L.Control.Draw(options);
 
-export const TrackDrawer: React.FC = () => {
+type TrackDrawerProps = {
+    drawingMode?: boolean,
+}
+
+export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
     const { map } = useLeaflet();
     const { setTrack } = useContext(trackContext);
 
@@ -32,9 +36,21 @@ export const TrackDrawer: React.FC = () => {
         }
 
         setTrack(track);
-        map.addControl(drawControl);
+
         map.addLayer(track);
     }, [map]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        if (drawingMode) {
+            map.addControl(drawControl);
+        } else {
+            map.removeControl(drawControl);
+        }
+    }, [map, drawingMode]);
 
     useEffect(() => {
         if (!map) {
@@ -46,7 +62,7 @@ export const TrackDrawer: React.FC = () => {
             // which makes typescript complain about no matching overload. TODO I guess?
             const event: DrawEvents.Created = e;
             const layer = event.layer;
-        
+
             track.addLayer(layer);
         });
     }, [map]);
