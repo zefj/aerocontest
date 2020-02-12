@@ -6,6 +6,7 @@ import './LeafletMap.scss';
 import { GpxLoader } from './GpxLoader';
 import { TrackDrawer } from './TrackDrawer/TrackDrawer';
 import { RouteAnalyser } from './RouteAnalyser/RouteAnalyser';
+import { Route } from 'react-router';
 
 export const LeafletMap: React.FC = () => {
     const [position] = useState<LatLngExpression>({
@@ -34,10 +35,14 @@ export const LeafletMap: React.FC = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <ZoomControl position="topleft" />
-                <ScaleControl position="bottomright" imperial={false} />
+                <ScaleControl position="bottomleft" imperial={false} />
 
                 <GpxLoader />
-                <TrackDrawer drawingMode={true} />
+                <Route path="/track">
+                    {({ match }) => (
+                        <TrackDrawer drawingMode={Boolean(match)} />
+                    )}
+                </Route>
                 <RouteAnalyser />
 
             </Map>

@@ -9,6 +9,8 @@ import 'leaflet/dist/leaflet.css';
 // This should be part of the TrackDrawer component, but webpack/cra config is refusing to cooperate.
 import 'leaflet-draw/dist/leaflet.draw.css';
 
+import { HashRouter } from 'react-router-dom';
+
 import { LeafletMap } from './components/LeafletMap';
 import { Sidebar } from './components/Control/Sidebar';
 
@@ -35,14 +37,15 @@ const App: React.FC = () => {
 
     const routesData = useRoutesDataProvider();
 
-    // todo: https://stackoverflow.com/questions/59743050/react-leaflet-placing-map-control-components-outside-of-map
     return (
         <div className="App">
             <routesContext.Provider value={routesData}>
                 <trackContext.Provider value={trackData}>
                     {/* TODO: do it like this: https://turbo87.github.io/sidebar-v2/examples/ */}
-                    <Sidebar />
-                    <LeafletMap />
+                    <HashRouter>
+                        <Sidebar />
+                        <LeafletMap />
+                    </HashRouter>
                 </trackContext.Provider>
             </routesContext.Provider>
         </div>

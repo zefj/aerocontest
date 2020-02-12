@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="Redo">
-      <change afterPath="$PROJECT_DIR$/src/components/Control/sidebar.css" afterDir="false" />
+    <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Control/Control.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Control/Sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Control/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Control/Sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Control/sidebar.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Control/sidebar.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/LeafletMap.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/LeafletMap.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/TrackDrawer/TrackDrawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TrackDrawer/TrackDrawer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Tabs/TabsNavigation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Tabs/TabsNavigation.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Tabs/types.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Tabs/types.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Tabs/useTabs.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -82,7 +85,7 @@
       <workItem from="1580133478158" duration="143000" />
       <workItem from="1581353844921" duration="12089000" />
       <workItem from="1581442332257" duration="12603000" />
-      <workItem from="1581527620353" duration="2089000" />
+      <workItem from="1581527620353" duration="4862000" />
     </task>
     <task id="LOCAL-00001" summary="Rewrite RouteAnalyser&#10;&#10;From now on, we perform route analysis using GPX track points and &#10;`@turf/boolean-point-in-polygon`, instead of relying on &#10;`@turf/line-split`, which in turn relied heavily on the GeoJSON spec. &#10;This approach gives us a very convenient way of extrating the offroute &#10;start/end points, as well as an easy access to track point metadata.">
       <created>1581365291058</created>
@@ -105,7 +108,14 @@
       <option name="project" value="LOCAL" />
       <updated>1581451763183</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Improve Sidebar styles so that Leaflet control positions around it">
+      <created>1581529769297</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1581529769297</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -131,6 +141,7 @@
     <MESSAGE value="Rewrite RouteAnalyser&#10;&#10;From now on, we perform route analysis using GPX track points and &#10;`@turf/boolean-point-in-polygon`, instead of relying on &#10;`@turf/line-split`, which in turn relied heavily on the GeoJSON spec. &#10;This approach gives us a very convenient way of extrating the offroute &#10;start/end points, as well as an easy access to track point metadata." />
     <MESSAGE value="Redo" />
     <MESSAGE value="Redo routes context, loader and analyser to handle multiple tracks" />
-    <option name="LAST_COMMIT_MESSAGE" value="Redo routes context, loader and analyser to handle multiple tracks" />
+    <MESSAGE value="Improve Sidebar styles so that Leaflet control positions around it" />
+    <option name="LAST_COMMIT_MESSAGE" value="Improve Sidebar styles so that Leaflet control positions around it" />
   </component>
 </project>
