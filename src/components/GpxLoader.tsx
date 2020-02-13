@@ -71,10 +71,8 @@ export const GpxLoader: React.FC = () => {
 
             routeParsed(route.name, gpx);
 
-            gpx.addTo(map);
-            // TODO: Would it be better if this was added to the map elsewhere, maybe by the route analyser?
-            route.offrouteFragmentsLayer.addTo(map);
-            route.offrouteMarkersLayer.addTo(map);
+            gpx.addTo(route.layers);
+            route.layers.addTo(map);
         });
 
         // This is probably only temporary so I don't have to pan the map on each refresh

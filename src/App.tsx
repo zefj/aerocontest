@@ -12,7 +12,7 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 import { HashRouter } from 'react-router-dom';
 
 import { LeafletMap } from './components/LeafletMap';
-import { Sidebar } from './components/Control/Sidebar';
+import { Sidebar } from './components/Sidebar/Sidebar';
 
 // stupid hack so that leaflet's images work after going through webpack
 // https://github.com/PaulLeCam/react-leaflet/issues/255#issuecomment-388492108

@@ -3,7 +3,8 @@ import L, { GPX } from "leaflet";
 
 export type Route = {
     name: string,
-    content: string,
+    content: string, // todo: reconsider this name
+    layers: L.FeatureGroup,
     gpx: GPX | null,
     offrouteFragmentsLayer: L.LayerGroup,
     offrouteMarkersLayer: L.FeatureGroup,
@@ -39,15 +40,28 @@ export interface RouteParsedAction {
 
 type RoutesReducerActions = AddRouteAction | RemoveRouteAction | RouteParsedAction;
 
+const createRoute = (name: string, content: string) => {
+    const layers = new L.FeatureGroup();
+    const offrouteFragmentsLayer = new L.LayerGroup();
+    const offrouteMarkersLayer = new L.FeatureGroup();
+
+    offrouteFragmentsLayer.addTo(layers);
+    offrouteMarkersLayer.addTo(layers);
+
+    return {
+        name,
+        content,
+        gpx: null,
+        layers,
+        offrouteFragmentsLayer,
+        offrouteMarkersLayer,
+    };
+};
+
 const routesReducer = (state: Route[], action: RoutesReducerActions) => {
     switch (action.type) {
         case 'ADD_ROUTE':
-            return [...state, {
-                ...action.payload,
-                gpx: null,
-                offrouteFragmentsLayer: new L.LayerGroup(),
-                offrouteMarkersLayer: new L.FeatureGroup(),
-            }];
+            return [...state, createRoute(action.payload.name, action.payload.content)];
         case 'REMOVE_ROUTE':
             return state.filter((route) => route.name !== action.payload);
         case 'ROUTE_PARSED':
