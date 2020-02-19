@@ -1,6 +1,11 @@
 import React from 'react';
+
+import { Box, Flex, Heading } from 'rebass';
+
 import { GPX } from 'leaflet';
 import { useRoutes } from '../../hooks/useRoutes';
+import { Button } from '../Button';
+import { space } from '../../styles/theme';
 
 type RouteDataProps = {
     route: GPX,
@@ -98,20 +103,32 @@ export const RouteTab: React.FC = () => {
     const { routes } = useRoutes();
 
     return (
-        <div className="px-6 py-4 overflow-auto">
+        <>
             {routes.map((route) => (
-                <div className="mb-2">
-                    <div className="font-bold text-xl mb-2">{route.name}</div>
+                <Box variant="container">
+                    <Flex
+                        mb={space['12']}
+                        sx={{ justifyContent: 'space-between', alignItems: 'center' }}
+                    >
+                        <Heading variant="heading.h3" mb="0">{route.name}</Heading>
+
+                        <Box sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
+                            <Button variant="primaryOutline" mr="4" icon="fas fa-edit" />
+                            <Button variant="secondaryOutline" mr="4" icon="fas fa-eye" />
+                            <Button variant="destructiveOutline" icon="fas fa-times" />
+                        </Box>
+                    </Flex>
 
                     {!route.gpx && (
+                        // todo add some sort of a spinner
                         <span>Ładowanie trasy...</span>
                     )}
 
                     {route.gpx && (
                         <RouteData route={route.gpx} />
                     )}
-                </div>
+                </Box>
             ))}
-        </div>
+        </>
     );
 };

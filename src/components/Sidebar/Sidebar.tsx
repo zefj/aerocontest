@@ -6,6 +6,7 @@ import { TabsNavigation } from '../Tabs/TabsNavigation';
 import { RouteTab } from '../RouteTab/RouteTab';
 
 import './sidebar.css';
+import { Box, Flex } from 'rebass';
 
 type ControlTabs = 'route' | 'track';
 
@@ -25,29 +26,39 @@ const tabs: Tab<ControlTabs>[] = [
 
 export const Sidebar: React.FC = () => {
     return (
-        <div className="sidebar absolute z-500 h-full">
-            <div className="flex flex-col bg-white h-full rounded shadow-lg overflow-hidden">
+        <Box
+            sx={{
+                position: 'absolute',
+                zIndex: 500,
+                height: '100%',
+            }}
+            className="sidebar"
+        >
+            <Flex
+                variant="sidebar"
+                flexDirection="column"
+                bg="background"
+                sx={{
+                    height: '100%',
+                }}
+            >
                 <TabsNavigation tabs={tabs} />
 
-                <Switch>
-                    <Route path="/(route|)">
-                        <RouteTab />
-                    </Route>
+                <Box variant="sidebarContent">
+                    <Switch>
+                        <Route path="/(route|)">
+                            <RouteTab />
+                        </Route>
 
-                    <Route path="/track">
-                        <div className="px-6 py-4 overflow-auto">
-                            <div className="font-bold text-xl mb-2">Track</div>
-                            <p className="text-gray-700 text-base">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
+                        <Route path="/track">
 
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
-                            </p>
-                        </div>
-                    </Route>
-                </Switch>
-            </div>
-        </div>
+                        </Route>
+                    </Switch>
+                </Box>
+            </Flex>
+
+            {/*<div className="flex flex-col bg-white h-full rounded shadow-lg overflow-hidden">*/}
+            {/*</div>*/}
+        </Box>
     );
 };

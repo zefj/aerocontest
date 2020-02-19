@@ -9,6 +9,7 @@ import 'leaflet/dist/leaflet.css';
 // This should be part of the TrackDrawer component, but webpack/cra config is refusing to cooperate.
 import 'leaflet-draw/dist/leaflet.draw.css';
 
+import { ThemeProvider } from 'emotion-theming';
 import { HashRouter } from 'react-router-dom';
 
 import { LeafletMap } from './components/LeafletMap';
@@ -22,6 +23,10 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { routesContext, useRoutesDataProvider } from './state/routesContext';
 import { useTrackData } from './hooks/useTrackData';
 import { trackContext } from './state/trackContext';
+
+import '@fortawesome/fontawesome-free/css/all.css';
+import { theme } from './styles/theme';
+import { Box } from 'rebass';
 
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl;
@@ -38,17 +43,26 @@ const App: React.FC = () => {
     const routesData = useRoutesDataProvider();
 
     return (
-        <div className="App">
-            <routesContext.Provider value={routesData}>
-                <trackContext.Provider value={trackData}>
-                    {/* TODO: do it like this: https://turbo87.github.io/sidebar-v2/examples/ */}
-                    <HashRouter>
-                        <Sidebar />
-                        <LeafletMap />
-                    </HashRouter>
-                </trackContext.Provider>
-            </routesContext.Provider>
-        </div>
+        <ThemeProvider theme={theme}>
+            <Box
+                className="App"
+                sx={{
+                    fontFamily: 'body',
+                    fontSize: 'body',
+                    color: 'text'
+                }}
+            >
+                <routesContext.Provider value={routesData}>
+                    <trackContext.Provider value={trackData}>
+                        {/* TODO: do it like this: https://turbo87.github.io/sidebar-v2/examples/ */}
+                        <HashRouter>
+                            <Sidebar />
+                            <LeafletMap />
+                        </HashRouter>
+                    </trackContext.Provider>
+                </routesContext.Provider>
+            </Box>
+        </ThemeProvider>
     );
 };
 

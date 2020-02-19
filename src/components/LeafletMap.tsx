@@ -30,10 +30,10 @@ export const LeafletMap: React.FC = () => {
     return (
         <div className="map-container">
             <Map center={position} zoom={zoom} zoomControl={false}>
-                <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
+                {/*<TileLayer*/}
+                {/*    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'*/}
+                {/*    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"*/}
+                {/*/>*/}
                 <ZoomControl position="topleft" />
                 <ScaleControl position="bottomleft" imperial={false} />
 

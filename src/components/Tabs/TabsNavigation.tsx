@@ -1,21 +1,29 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Link, useLocation, matchPath } from 'react-router-dom';
+import { Link as RouterLink, useLocation, matchPath } from 'react-router-dom';
+import { Flex, Box } from 'rebass';
+
+const Tab = (props: any) => (
+    <Box
+        as={RouterLink}
+        {...props}
+    />
+);
 
 export const TabsNavigation = <T extends TabIndex>({ tabs }: TabsProps<T>) => {
     const location = useLocation();
 
     return (
-        <nav className="w-full flex text-center bg-yellow-400">
+        <Flex as="nav" variant="nav">
             {
                 tabs.map((tab) => (
-                    <Link
+                    <Tab
+                        variant="nav.item"
                         to={tab.path}
                         key={`tab-nav-${tab.index}`}
                         className={classNames(
-                            'flex-auto p-3 text-sm cursor-pointer text-gray-700 hover:bg-yellow-500 border-b-4 border-solid border-yellow-500',
                             {
-                                'text-gray-800 bg-yellow-500 border-yellow-700': matchPath(
+                                'active': matchPath(
                                     location.pathname,
                                     { path: tab.match || tab.path }
                                 )
@@ -23,9 +31,9 @@ export const TabsNavigation = <T extends TabIndex>({ tabs }: TabsProps<T>) => {
                         )}
                     >
                         { tab.name }
-                    </Link>
+                    </Tab>
                 ))
             }
-        </nav>
+        </Flex>
     );
 };
