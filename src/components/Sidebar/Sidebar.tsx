@@ -2,27 +2,12 @@ import React from 'react';
 
 import { Switch, Route } from 'react-router-dom';
 
-import { TabsNavigation } from '../Tabs/TabsNavigation';
-import { RouteTab } from '../RouteTab/RouteTab';
+import { RouteStep } from '../RouteStep/RouteStep';
 
 import './sidebar.css';
-import { Box, Flex } from 'rebass';
-
-type ControlTabs = 'route' | 'track';
-
-const tabs: Tab<ControlTabs>[] = [
-    {
-        index: 'route',
-        path: '/route',
-        match: '/(route|)',
-        name: 'Trasa',
-    },
-    {
-        index: 'track',
-        path: '/track',
-        name: 'Tor',
-    }
-];
+import { Box, Flex, Heading, Text } from 'rebass';
+import { WelcomeStep } from '../WelcomeStep/WelcomeStep';
+import { ExternalLinkButton, LinkButton } from '../Button';
 
 export const Sidebar: React.FC = () => {
     return (
@@ -42,23 +27,79 @@ export const Sidebar: React.FC = () => {
                     height: '100%',
                 }}
             >
-                <TabsNavigation tabs={tabs} />
+                <Flex variant="header">
+                    <Heading variant="heading.h2" mb="0">
+                        <Text as="span" color="primary">AERO</Text>
+                        <Text as="span" color="muted" fontWeight="normal">CONTEST</Text>
+                    </Heading>
+
+                    <ExternalLinkButton
+                        href="https://github.com/zefj/aerocontest"
+                        variant="github"
+                        icon="fab fa-github"
+                    />
+                </Flex>
 
                 <Box variant="sidebarContent">
                     <Switch>
-                        <Route path="/(route|)">
-                            <RouteTab />
+                        <Route path="/(welcome|)">
+                            <WelcomeStep />
+                        </Route>
+
+                        <Route path="/route">
+                            <RouteStep />
                         </Route>
 
                         <Route path="/track">
 
                         </Route>
+
+                        <Route path="/summary">
+
+                        </Route>
                     </Switch>
                 </Box>
-            </Flex>
 
-            {/*<div className="flex flex-col bg-white h-full rounded shadow-lg overflow-hidden">*/}
-            {/*</div>*/}
+                <Flex as="nav" variant="nav">
+                    <Switch>
+                        <Route path="/(welcome|)">
+                            <LinkButton to="/route" variant="primary">
+                                Zaczynamy
+                            </LinkButton>
+                        </Route>
+
+                        <Route path="/(route|)">
+                            <LinkButton to="/welcome" variant="secondaryOutline">
+                                Wróć
+                            </LinkButton>
+
+                            <LinkButton to="/track" variant="primary">
+                                Wyznacz trasę
+                            </LinkButton>
+                        </Route>
+
+                        <Route path="/track">
+                            <LinkButton to="/route" variant="secondaryOutline">
+                                Wróć
+                            </LinkButton>
+
+                            <LinkButton to="/summary" variant="primary">
+                                Podsumowanie
+                            </LinkButton>
+                        </Route>
+
+                        <Route path="/summary">
+                            <LinkButton to="/track" variant="secondaryOutline">
+                                Wróć
+                            </LinkButton>
+
+                            <LinkButton to="/export" variant="primaryOutline">
+                                Eksportuj dane
+                            </LinkButton>
+                        </Route>
+                    </Switch>
+                </Flex>
+            </Flex>
         </Box>
     );
 };

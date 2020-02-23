@@ -74,7 +74,7 @@ const palette = {
 
 // Spacing and sizing system
 // Defined as constants to allow explicit references, instead of the ridiculous ambiguous default way
-const fontSize = {
+export const fontSize = {
     body: '16px',
     12: `${12/16}rem`,
     14: `${14/16}rem`,
@@ -105,11 +105,13 @@ const preset = {
         text: palette['cool-grey-800'],
         textLight: palette['cool-grey-050'],
         background: '#fff',
-        primary: palette['green-600'],
+        primary: palette['purple-500'],
         secondary: palette['cool-grey-400'],
         muted: palette['cool-grey-500'],
         gray: palette['cool-grey-300'],
         highlight: 'hsla(205, 100%, 40%, 0.125)',
+
+        header: palette['cool-grey-200'],
     },
     fonts: {
         body: 'Lato, system-ui, sans-serif',
@@ -173,6 +175,13 @@ const preset = {
         },
     },
     variants: {
+        header: {
+            backgroundColor: 'header',
+            letterSpacing: '-2px',
+            padding: space['16'],
+            justifyContent: 'space-between',
+            alignItems: 'center',
+        },
         sidebar: {
             borderRadius: 'default',
             overflow: 'hidden',
@@ -185,46 +194,30 @@ const preset = {
         },
         container: {
             marginBottom: space['24'],
-
         },
         link: {
             color: 'primary',
         },
         nav: {
-            fontSize: fontSize['16'],
-            fontWeight: 'bold',
-            display: 'inline-block',
-            color: 'inherit',
-            backgroundColor: 'white',
-            textDecoration: 'none',
-            item: {
-                textDecoration: 'none',
-                flex: 1,
-                padding: space['16'],
-                borderBottom: 'solid 5px',
-                borderColor: 'secondary',
-                '&.active': {
-                    backgroundColor: palette['light-blue-500'],
-                    borderColor: palette['light-blue-700'],
-                    color: 'textLight',
-                },
-                ':hover:not(.active), :focus:not(.active)': {
-                    backgroundColor: palette['light-blue-300'],
-                    borderColor: palette['light-blue-500'],
-                    color: 'textLight',
-                }
-            }
+            px: space['24'],
+            py: space['16'],
+            justifyContent: 'center',
+            marginTop: 'auto',
+
+            '*:not(:only-child):not(:first-of-type)': {
+                marginLeft: space['8'],
+            },
         },
     },
     buttons: {
         primary: {
+            cursor: 'pointer',
             fontSize: fontSize['16'],
-            fontWeight: 'bold',
-            px: space['8'],
-            py: space['4'],
             color: 'background',
             bg: 'primary',
             borderRadius: 'default',
+            px: space['16'],
+            py: space['8'],
         },
         outline: {
             variant: 'buttons.primary',
@@ -253,6 +246,16 @@ const preset = {
             variant: 'buttons.outline',
             color: palette['red-500'],
         },
+
+        github: {
+            variant: 'buttons.outline',
+            boxShadow: 0,
+            fontSize: fontSize['24'],
+            color: 'muted',
+            ':hover:not(.active), :focus:not(.active)': {
+                color: 'primary',
+            }
+        }
     },
 };
 

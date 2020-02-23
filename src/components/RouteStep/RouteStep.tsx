@@ -99,7 +99,7 @@ const RouteData: React.FC<RouteDataProps> = ({ route }) => {
     );
 };
 
-export const RouteTab: React.FC = () => {
+export const RouteStep: React.FC = () => {
     const { routes } = useRoutes();
 
     return (
@@ -113,9 +113,9 @@ export const RouteTab: React.FC = () => {
                         <Heading variant="heading.h3" mb="0">{route.name}</Heading>
 
                         <Box sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
-                            <Button variant="primaryOutline" mr="4" icon="fas fa-edit" />
-                            <Button variant="secondaryOutline" mr="4" icon="fas fa-eye" />
-                            <Button variant="destructiveOutline" icon="fas fa-times" />
+                            <Button variant="primaryOutline" mr="4" icon="fa-fw fas fa-edit" />
+                            <Button variant="secondaryOutline" mr="4" icon="fa-fw fas fa-eye" />
+                            <Button variant="destructiveOutline" icon="fa-fw fas fa-times" />
                         </Box>
                     </Flex>
 
