@@ -1,29 +1,96 @@
 import { Route as RouteType } from '../../state/routesContext';
-import { Box, Flex, Heading } from 'rebass';
+import { Box, Flex, Heading, Text } from 'rebass';
 import { space } from '../../styles/theme';
 import { Button } from '../Button';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Input } from '@rebass/forms';
+import { useRoutes } from '../../hooks/useRoutes';
+
+type RouteNameInputProps = {
+    defaultValue: string,
+    onAccept: (name: string | null) => void,
+};
+
+const RouteNameInput = ({ defaultValue, onAccept }: RouteNameInputProps ) => {
+    const ref = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const input = ref.current;
+
+        if (input) {
+            input.focus();
+        }
+    }, [ref.current]);
+
+    return (
+        <Input
+            ref={ref}
+            id='name'
+            name='name'
+            type='text'
+            defaultValue={defaultValue}
+            onBlur={() => onAccept(ref.current && ref.current.value)}
+        />
+    );
+};
+
+const RouteName = ({ name, onChange }: { name: string, onChange: (name: string) => void }) => {
+    const [isEditing, setIsEditing] = useState(false);
+
+    if (isEditing) {
+        return (
+            <RouteNameInput
+                defaultValue={name}
+                onAccept={(name) => {
+                    setIsEditing(false);
+                    name && onChange(name);
+                }}
+            />
+        );
+    }
+
+    return (
+        <Box
+            sx={{ cursor: 'pointer' }}
+            onClick={() => setIsEditing(true)}
+        >
+            <Heading variant="routeName">
+                {name}
+            </Heading>
+            <Text variant="instruction">Kliknij, aby zmienić nazwę...</Text>
+        </Box>
+    );
+};
 
 export const Route = ({ route }: { route: RouteType }) => {
+    const { changeRouteName, removeRoute } = useRoutes();
+
     return (
         <Box variant="container">
             <Flex
                 mb={space['12']}
-                sx={{ justifyContent: 'space-between', alignItems: 'center' }}
+                sx={{
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    // Setting min-height prevents the following rows from jumping 1 pixel up when the input is rendered
+                    minHeight: space['48']
+                }}
             >
-                <Heading variant="routeName">{route.name}</Heading>
+                <RouteName
+                    name={route.name}
+                    onChange={(name: string) => changeRouteName(route.name, name)}
+                />
 
                 <Box sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
-                    <Button variant="primaryOutline" mr="4" icon="fa-fw fas fa-edit" />
-                    <Button variant="secondaryOutline" mr="4" icon="fa-fw fas fa-eye" />
-                    <Button variant="destructiveOutline" icon="fa-fw fas fa-times" />
+                    <Button variant="secondaryOutline" mr="4" icon="fa-fw fas fa-eye" sx={{ height: '100%' }} />
+                    <Button
+                        variant="destructiveOutline"
+                        icon="fa-fw fas fa-times"
+                        sx={{ height: '100%' }}
+                        onClick={() => removeRoute(route.name)}
+                    />
                 </Box>
             </Flex>
-
-            {!route.gpx && (
-                // todo add some sort of a spinner
-                <span>Ładowanie trasy...</span>
-            )}
 
             {/*{route.gpx && (*/}
             {/*    <RouteData route={route.gpx} />*/}

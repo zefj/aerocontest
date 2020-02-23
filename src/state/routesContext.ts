@@ -15,6 +15,7 @@ export interface RoutesContext {
     addRoute: (name: string, content: string) => void,
     removeRoute: (name: string) => void,
     routeParsed: (name: string, gpx: GPX) => void,
+    changeRouteName: (oldName: string, name: string) => void,
 }
 
 export interface AddRouteAction {
@@ -38,7 +39,15 @@ export interface RouteParsedAction {
     }
 }
 
-type RoutesReducerActions = AddRouteAction | RemoveRouteAction | RouteParsedAction;
+export interface ChangeRouteName {
+    type: 'CHANGE_ROUTE_NAME',
+    payload: {
+        oldName: string,
+        name: string,
+    }
+}
+
+type RoutesReducerActions = AddRouteAction | RemoveRouteAction | RouteParsedAction | ChangeRouteName;
 
 const createRoute = (name: string, content: string) => {
     const layers = new L.FeatureGroup();
@@ -65,7 +74,15 @@ const routesReducer = (state: Route[], action: RoutesReducerActions) => {
             // TODO: handle duplicates?
             return [createRoute(action.payload.name, action.payload.content), ...state];
         case 'REMOVE_ROUTE':
-            return state.filter((route) => route.name !== action.payload);
+            return state.filter((route) => {
+                if (route.name !== action.payload) {
+                    return true;
+                }
+
+                route.layers.remove();
+
+                return false;
+            });
         case 'ROUTE_PARSED':
             return state.map((route) => {
                 if (route.name !== action.payload.name) {
@@ -75,6 +92,17 @@ const routesReducer = (state: Route[], action: RoutesReducerActions) => {
                 return {
                     ...route,
                     ...action.payload,
+                };
+            });
+        case 'CHANGE_ROUTE_NAME':
+            return state.map((route) => {
+                if (route.name !== action.payload.oldName) {
+                    return route;
+                }
+
+                return {
+                    ...route,
+                    name: action.payload.name,
                 };
             });
         default:
@@ -97,11 +125,16 @@ export const useRoutesDataProvider = (): RoutesContext => {
         dispatch({ type: 'ROUTE_PARSED', payload: { name, gpx } });
     }, []);
 
+    const changeRouteName = useCallback((oldName: string, name: string) => {
+        dispatch({ type: 'CHANGE_ROUTE_NAME', payload: { oldName, name } });
+    }, []);
+
     return {
         routes,
         addRoute,
         removeRoute,
         routeParsed,
+        changeRouteName,
     };
 };
 
@@ -110,4 +143,5 @@ export const routesContext = createContext<RoutesContext>({
     addRoute: () => {},
     removeRoute: () => {},
     routeParsed: () => {},
+    changeRouteName: () => {},
 });

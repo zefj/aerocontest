@@ -135,27 +135,37 @@ const preset = {
     shadows: {
         card: '0 0 4px rgba(0, 0, 0, .125)',
     },
+    input: {
+        marginRight: space['8'],
+        padding: space['8'],
+        border: '0',
+        boxShadow: 'inset 0 0 2px',
+    },
     // rebass variants
     text: {
         heading: {
             fontFamily: 'heading',
             lineHeight: 'heading',
             fontWeight: 'heading',
-            marginBottom: space['12'],
+            letterSpacing: '-1px',
 
             h1: {
+                letterSpacing: '-1px', // nesting doesn't seem to inherit values... this is kinda dumb
                 marginBottom: space['12'],
                 fontSize: fontSize['48'],
             },
             h2: {
+                letterSpacing: '-1px',
                 marginBottom: space['12'],
                 fontSize: fontSize['30'],
             },
             h3: {
+                letterSpacing: '-1px',
                 marginBottom: space['12'],
                 fontSize: fontSize['24'],
             },
             h4: {
+                letterSpacing: '-1px',
                 marginBottom: space['12'],
                 fontSize: fontSize['20'],
             },
@@ -180,6 +190,10 @@ const preset = {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             marginBottom: 0,
+        },
+        instruction: {
+            fontSize: fontSize['12'],
+            color: 'muted',
         }
     },
     variants: {
@@ -191,6 +205,8 @@ const preset = {
             alignItems: 'center',
         },
         sidebar: {
+            // This is stolen from leaflet control css, but I don't like it, so TODO
+            boxShadow: '0 1px 5px rgba(0,0,0,0.65)',
             borderRadius: 'default',
             overflow: 'hidden',
         },

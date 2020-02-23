@@ -36,6 +36,14 @@ export const RouteUploader = () => {
     }, []);
 
     return (
-        <DragDrop uppy={uppy} />
+        <DragDrop
+            uppy={uppy}
+            locale={{
+                strings: {
+                    dropHereOr: 'Przeciągnij i upuść pliki lub %{browse}',
+                    browse: 'przeglądaj'
+                }
+            }}
+        />
     );
 };
