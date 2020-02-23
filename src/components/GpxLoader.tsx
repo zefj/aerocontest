@@ -49,8 +49,8 @@ export const GpxLoader: React.FC = () => {
     const { routes, addRoute, routeParsed } = useRoutes();
 
     useEffect(() => {
-        addRoute('Route 1', route1content);
-        addRoute('Route 2', route2content);
+        addRoute('13_paź_2019_09_06_10_1570956876047.gpx', route1content);
+        addRoute('29_gru_2019_13_17_57_rec.gpx', route2content);
     }, []);
 
     useEffect(() => {

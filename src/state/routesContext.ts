@@ -61,7 +61,9 @@ const createRoute = (name: string, content: string) => {
 const routesReducer = (state: Route[], action: RoutesReducerActions) => {
     switch (action.type) {
         case 'ADD_ROUTE':
-            return [...state, createRoute(action.payload.name, action.payload.content)];
+            // prepend
+            // TODO: handle duplicates?
+            return [createRoute(action.payload.name, action.payload.content), ...state];
         case 'REMOVE_ROUTE':
             return state.filter((route) => route.name !== action.payload);
         case 'ROUTE_PARSED':

@@ -173,6 +173,14 @@ const preset = {
         iconButtonText: {
             marginLeft: space['8'],
         },
+        routeName: {
+            marginRight: space['8'],
+            fontSize: fontSize['16'],
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            marginBottom: 0,
+        }
     },
     variants: {
         header: {

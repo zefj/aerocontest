@@ -18,6 +18,8 @@
     "@types/react-leaflet": "^2.5.0",
     "@types/react-router-dom": "^5.1.3",
     "@types/rebass": "^4.0.4",
+    "@uppy/core": "^1.8.2",
+    "@uppy/react": "^1.4.5",
     "classnames": "^2.2.6",
     "emotion-theming": "^10.0.27",
     "leaflet": "^1.6.0",

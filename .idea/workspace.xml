@@ -2,16 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/components/TrackStep/TrackStep.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/WelcomeStep/WelcomeStep.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/RouteStep/Route.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/RouteStep/RouteUploader.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Button.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/RouteTab/RouteTab.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteStep/RouteStep.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Sidebar/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Sidebar/Sidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Tabs/TabsNavigation.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Tabs/types.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/TrackTab/TrackTab.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/GpxLoader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/GpxLoader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/RouteStep/RouteStep.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteStep/RouteStep.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/routesContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/routesContext.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/styles/theme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/theme.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -91,7 +90,7 @@
       <workItem from="1581532508821" duration="77000" />
       <workItem from="1581612138979" duration="13780000" />
       <workItem from="1582132023366" duration="7789000" />
-      <workItem from="1582463179633" duration="3636000" />
+      <workItem from="1582463179633" duration="6753000" />
     </task>
     <task id="LOCAL-00001" summary="Rewrite RouteAnalyser&#10;&#10;From now on, we perform route analysis using GPX track points and &#10;`@turf/boolean-point-in-polygon`, instead of relying on &#10;`@turf/line-split`, which in turn relied heavily on the GeoJSON spec. &#10;This approach gives us a very convenient way of extrating the offroute &#10;start/end points, as well as an easy access to track point metadata.">
       <created>1581365291058</created>
@@ -142,7 +141,14 @@
       <option name="project" value="LOCAL" />
       <updated>1582136280344</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Overhaul navigation by replacing tabs with more intuitive step-based system">
+      <created>1582466960823</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1582466960823</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -172,6 +178,7 @@
     <MESSAGE value="Overhaul Tabs to use react-router" />
     <MESSAGE value="Add a Route feature group that groups all the layers, modify route&#10;creation logic accordingly" />
     <MESSAGE value="Replace tailwind in favour of rebass" />
-    <option name="LAST_COMMIT_MESSAGE" value="Replace tailwind in favour of rebass" />
+    <MESSAGE value="Overhaul navigation by replacing tabs with more intuitive step-based system" />
+    <option name="LAST_COMMIT_MESSAGE" value="Overhaul navigation by replacing tabs with more intuitive step-based system" />
   </component>
 </project>
