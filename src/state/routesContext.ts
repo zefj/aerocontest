@@ -1,20 +1,26 @@
 import { createContext, useCallback, useReducer } from 'react';
 import L, { GPX } from "leaflet";
+import { RouteAnalysis } from '../components/RouteAnalyser/RouteAnalyser';
 
 export type Route = {
+    // RoutesContext
     name: string,
     content: string, // todo: reconsider this name
-    layers: L.FeatureGroup,
     gpx: GPX | null,
-    offrouteFragmentsLayer: L.LayerGroup,
-    offrouteMarkersLayer: L.FeatureGroup,
+    // RouteAnalysisContext? Should this be further split into Layers context and Analysis context? 
+    analysis: RouteAnalysis | null,
+    layers: L.FeatureGroup,
+    offtrackFragmentsLayer: L.LayerGroup,
+    offtrackMarkersLayer: L.FeatureGroup,
 }
 
+// TODO: split this into multiple contexts as seen above, to avoid issues with rerendering after analysis
 export interface RoutesContext {
     routes: Route[],
     addRoute: (name: string, content: string) => void,
     removeRoute: (name: string) => void,
     routeParsed: (name: string, gpx: GPX) => void,
+    routeAnalysed: (name: string, analysis: RouteAnalysis) => void,
     changeRouteName: (oldName: string, name: string) => void,
 }
 
@@ -39,6 +45,14 @@ export interface RouteParsedAction {
     }
 }
 
+export interface RouteAnalysedAction {
+    type: 'ROUTE_ANALYSED',
+    payload: {
+        name: string,
+        analysis: RouteAnalysis,
+    }
+}
+
 export interface ChangeRouteName {
     type: 'CHANGE_ROUTE_NAME',
     payload: {
@@ -47,23 +61,24 @@ export interface ChangeRouteName {
     }
 }
 
-type RoutesReducerActions = AddRouteAction | RemoveRouteAction | RouteParsedAction | ChangeRouteName;
+type RoutesReducerActions = AddRouteAction | RemoveRouteAction | RouteParsedAction | RouteAnalysedAction | ChangeRouteName;
 
 const createRoute = (name: string, content: string) => {
     const layers = new L.FeatureGroup();
-    const offrouteFragmentsLayer = new L.LayerGroup();
-    const offrouteMarkersLayer = new L.FeatureGroup();
+    const offtrackFragmentsLayer = new L.LayerGroup();
+    const offtrackMarkersLayer = new L.FeatureGroup();
 
-    offrouteFragmentsLayer.addTo(layers);
-    offrouteMarkersLayer.addTo(layers);
+    offtrackFragmentsLayer.addTo(layers);
+    offtrackMarkersLayer.addTo(layers);
 
     return {
         name,
         content,
+        analysis: null,
         gpx: null,
         layers,
-        offrouteFragmentsLayer,
-        offrouteMarkersLayer,
+        offtrackFragmentsLayer,
+        offtrackMarkersLayer,
     };
 };
 
@@ -94,6 +109,17 @@ const routesReducer = (state: Route[], action: RoutesReducerActions) => {
                     ...action.payload,
                 };
             });
+        case 'ROUTE_ANALYSED':
+            return state.map((route) => {
+                if (route.name !== action.payload.name) {
+                    return route;
+                }
+
+                return {
+                    ...route,
+                    ...action.payload,
+                };
+            });    
         case 'CHANGE_ROUTE_NAME':
             return state.map((route) => {
                 if (route.name !== action.payload.oldName) {
@@ -125,6 +151,10 @@ export const useRoutesDataProvider = (): RoutesContext => {
         dispatch({ type: 'ROUTE_PARSED', payload: { name, gpx } });
     }, []);
 
+    const routeAnalysed = useCallback((name: string, analysis: RouteAnalysis) => {
+        dispatch({ type: 'ROUTE_ANALYSED', payload: { name, analysis } });
+    }, []);
+
     const changeRouteName = useCallback((oldName: string, name: string) => {
         dispatch({ type: 'CHANGE_ROUTE_NAME', payload: { oldName, name } });
     }, []);
@@ -134,6 +164,7 @@ export const useRoutesDataProvider = (): RoutesContext => {
         addRoute,
         removeRoute,
         routeParsed,
+        routeAnalysed,
         changeRouteName,
     };
 };
@@ -143,5 +174,6 @@ export const routesContext = createContext<RoutesContext>({
     addRoute: () => {},
     removeRoute: () => {},
     routeParsed: () => {},
+    routeAnalysed: () => {},
     changeRouteName: () => {},
 });

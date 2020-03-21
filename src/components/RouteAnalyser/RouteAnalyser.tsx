@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Route } from '../../state/routesContext';
+import { Route, RoutesContext } from '../../state/routesContext';
 import { useLeaflet } from 'react-leaflet';
 import L, { LayerEvent, LatLng } from 'leaflet';
 
@@ -30,18 +30,19 @@ const polygonToGeoJSON = (polygon: L.Layer) => {
     throw new Error('Could not transform polygon to geojson data, unknown Layer type.');
 };
 
-type PointAnalysis = {
-    state: 'offtrack' | 'ontrack',
-    point: GPXLatLng
+export type RouteAnalysis = {
+    ontrackFragments: TrackFragments,
+    offtrackFragments: TrackFragments,
 };
-
-type RouteAnalysis = PointAnalysis[];
 
 const performRouteAnalysis = (
     routePolyline: L.Polyline,
     track: L.FeatureGroup,
 ): RouteAnalysis => {
-    const analysis: RouteAnalysis = [];
+    const ontrackFragments: TrackFragments = [];
+    const offtrackFragments: TrackFragments = [];
+    
+    let lastPoint: 'offtrack' | 'ontrack' | null = null;
 
     routePolyline.getLatLngs().forEach((routePoint: LatLng | LatLng[] | LatLng[][]) => {
         const p = routePoint as GPXLatLng;
@@ -51,22 +52,44 @@ const performRouteAnalysis = (
             const geoJsonPolygon = polygonToGeoJSON(polygon);
 
             if (booleanPointInPolygon(pointFeature, geoJsonPolygon as any)) {
-                analysis.push({
-                    state: 'ontrack',
-                    point: p,
-                });
+                let fragment: GPXLatLng[] = [];
 
-                return;
+                if (ontrackFragments.length) {
+                    fragment = ontrackFragments[ontrackFragments.length - 1];
+                } else {
+                    ontrackFragments.push(fragment);
+                }
+
+                if (lastPoint === 'offtrack') {
+                    // Start a new offtrack fragment
+                    offtrackFragments.push([]);
+                }
+
+                lastPoint = 'ontrack';
+
+                return fragment.push(p);
             }
         }
 
-        analysis.push({
-            state: 'offtrack',
-            point: p,
-        });
+        let fragment: GPXLatLng[] = [];
+
+        if (offtrackFragments.length) {
+            fragment = offtrackFragments[offtrackFragments.length - 1];
+        } else {
+            offtrackFragments.push(fragment);
+        }
+
+        if (lastPoint === 'ontrack') {
+            // Start a new offtrack fragment
+            ontrackFragments.push([]);
+        }
+
+        lastPoint = 'offtrack';
+
+        fragment.push(p);
     });
 
-    return analysis;
+    return { offtrackFragments, ontrackFragments };
 };
 
 interface GPXLatLng extends LatLng {
@@ -75,33 +98,17 @@ interface GPXLatLng extends LatLng {
     }
 }
 
-type OfftrackFragments = GPXLatLng[][];
+type TrackFragments = GPXLatLng[][];
 
-const analyseRoutePoints = (analysis: RouteAnalysis): OfftrackFragments => {
-    const fragments: OfftrackFragments = [];
-
-    analysis.forEach((pointAnalysis, i) => {
-        let fragment = fragments.length ? fragments[fragments.length - 1] : [];
-
-        if (pointAnalysis.state === 'offtrack') {
-            // Start a new fragment when crossing a polygon boundary
-            // This is to ensure correct behaviour when there are polygons that do not overlap
-            if (!analysis[i - 1] || analysis[i - 1].state === 'ontrack') {
-                fragment = [];
-                fragments.push(fragment);
-            }
-
-            return fragment.push(pointAnalysis.point);
-        }
-    });
-
-    return fragments;
-};
-
-const analyse = (
+const analyseRoutes = (
     routes: Route[],
     track: L.FeatureGroup,
+    onRouteAnalysed: RoutesContext['routeAnalysed'],
 ): void => {
+    console.log('Running analysis...');
+
+    const trackEmpty = track.getLayers().length === 0;
+
     routes.forEach((route) => {
         if (!route.gpx) {
             return;
@@ -113,27 +120,28 @@ const analyse = (
             throw new Error('Polyline layer not found in route.');
         }
 
-        const analysis = performRouteAnalysis(polylineLayer, track);
+        const routeAnalysis = performRouteAnalysis(polylineLayer, track);
+        // onRouteAnalysed(route.name, routeAnalysis);
 
-        let offrouteFragments: OfftrackFragments = [];
-
-        if (track.getLayers().length !== 0) {
+        const { offtrackFragments, ontrackFragments } = routeAnalysis;
+        
+        if (!trackEmpty) {
             polylineLayer.setStyle(ROUTE_LINE_STYLE_ONTRACK);
-            offrouteFragments = analyseRoutePoints(analysis);
         } else {
             // There are no offtracks without tracks, reset the route line style to neutral
             polylineLayer.setStyle(ROUTE_LINE_STYLE);
         }
 
-        drawOfftrackElements(route, offrouteFragments);
+        // Do not draw offtrack fragments if the track is empty, this is purely visual
+        drawOfftrackElements(route, !trackEmpty ? offtrackFragments : []);
     });
 };
 
-const drawOfftrackElements = (route: Route, offrouteFragments: OfftrackFragments) => {
-    route.offrouteMarkersLayer.clearLayers();
-    route.offrouteFragmentsLayer.clearLayers();
+const drawOfftrackElements = (route: Route, offtrackFragments: TrackFragments) => {
+    route.offtrackMarkersLayer.clearLayers();
+    route.offtrackFragmentsLayer.clearLayers();
 
-    offrouteFragments.forEach((fragment) => {
+    offtrackFragments.forEach((fragment) => {
         if (fragment.length < 2) {
             return;
         }
@@ -142,21 +150,21 @@ const drawOfftrackElements = (route: Route, offrouteFragments: OfftrackFragments
         const entryPoint = fragment[fragment.length - 1];
 
         L.marker([exitPoint.lat, exitPoint.lng])
-            .addTo(route.offrouteMarkersLayer)
+            .addTo(route.offtrackMarkersLayer)
             .bindTooltip(exitPoint.meta.time.toString(), OFFTRACK_POINT_TOOLTIP_OPTIONS);
 
         L.marker([entryPoint.lat, entryPoint.lng])
-            .addTo(route.offrouteMarkersLayer)
+            .addTo(route.offtrackMarkersLayer)
             .bindTooltip(entryPoint.meta.time.toString(), OFFTRACK_POINT_TOOLTIP_OPTIONS);
 
-        L.polyline(offrouteFragments, ROUTE_LINE_STYLE_OFFTRACK).addTo(route.offrouteFragmentsLayer);
+        L.polyline(offtrackFragments, ROUTE_LINE_STYLE_OFFTRACK).addTo(route.offtrackFragmentsLayer);
     });
 };
 
 export const RouteAnalyser: React.FC = () => {
     const { map } = useLeaflet();
     const { track } = useContext(trackContext);
-    const { routes } = useRoutes();
+    const { routes, routeAnalysed } = useRoutes();
 
     useEffect(() => {
         if (!map) {
@@ -170,13 +178,13 @@ export const RouteAnalyser: React.FC = () => {
         if (!track) {
             return;
         }
-
+console.log('effect');
         // Run initial analysis
-        analyse(routes, track);
+        analyseRoutes(routes, track, routeAnalysed);
 
-        track.on('layeradd layerremove', (e: LayerEvent) => analyse(routes, track));
+        track.on('layeradd layerremove', (e: LayerEvent) => analyseRoutes(routes, track, routeAnalysed));
         // TODO: figure out if this event can be fired on track
-        map.on(L.Draw.Event.EDITED, (e: LayerEvent) => analyse(routes, track));
+        map.on(L.Draw.Event.EDITED, (e: LayerEvent) => analyseRoutes(routes, track, routeAnalysed));
     }, [map, routes, track]);
 
     return null;
