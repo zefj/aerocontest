@@ -1,10 +1,11 @@
-import { Route as RouteType } from '../../state/routesContext';
 import { Box, Flex, Heading, Text } from 'rebass';
 import { space } from '../../styles/theme';
 import { Button } from '../Button';
 import React, { useEffect, useRef, useState } from 'react';
 import { Input } from '@rebass/forms';
-import { useRoutes } from '../../hooks/useRoutes';
+import { useDispatch } from 'react-redux';
+import { changeRouteName, removeRoute } from '../../state/routes/routesActions';
+import { Route } from '../../types/routes';
 
 type RouteNameInputProps = {
     defaultValue: string,
@@ -62,8 +63,8 @@ const RouteName = ({ name, onChange }: { name: string, onChange: (name: string) 
     );
 };
 
-export const Route = ({ route }: { route: RouteType }) => {
-    const { changeRouteName, removeRoute } = useRoutes();
+export const RouteRecord = ({ route }: { route: Route }) => {
+    const dispatch = useDispatch();
 
     return (
         <Box variant="container">
@@ -78,7 +79,7 @@ export const Route = ({ route }: { route: RouteType }) => {
             >
                 <RouteName
                     name={route.name}
-                    onChange={(name: string) => changeRouteName(route.name, name)}
+                    onChange={(name: string) => dispatch(changeRouteName(route.name, name))}
                 />
 
                 <Box sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
@@ -87,7 +88,7 @@ export const Route = ({ route }: { route: RouteType }) => {
                         variant="destructiveOutline"
                         icon="fa-fw fas fa-times"
                         sx={{ height: '100%' }}
-                        onClick={() => removeRoute(route.name)}
+                        onClick={() => dispatch(removeRoute(route.name))}
                     />
                 </Box>
             </Flex>

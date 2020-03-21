@@ -1,12 +1,13 @@
 import React from 'react';
 import { Box, Heading, Text } from 'rebass';
 
-import { useRoutes } from '../../hooks/useRoutes';
 import { RouteUploader } from './RouteUploader';
-import { Route } from './Route';
+import { RouteRecord } from './RouteRecord';
+import { useSelector } from 'react-redux';
+import { getRoutes } from '../../state/routes/routesReducer';
 
 export const RouteStep: React.FC = () => {
-    const { routes } = useRoutes();
+    const routes = useSelector(getRoutes);
 
     return (
         <>
@@ -24,7 +25,7 @@ export const RouteStep: React.FC = () => {
                 <Text>Nie załadowano żadnych tras, przeciągnij pliki <code>.gpx</code> do okna powyżej, lub użyj przeglądarki plików.</Text>
             )}
 
-            {routes.map((route) => <Route route={route} />)}
+            {routes.map((route) => <RouteRecord route={route} />)}
         </>
     );
 };

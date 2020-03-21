@@ -4,7 +4,8 @@ import { DragDrop } from '@uppy/react';
 
 import '@uppy/core/dist/style.css'
 import '@uppy/drag-drop/dist/style.css'
-import { useRoutes } from '../../hooks/useRoutes';
+import { useDispatch } from 'react-redux';
+import { addRoute } from '../../state/routes/routesActions';
 
 const uppy = Uppy({
     autoProceed: true,
@@ -25,13 +26,13 @@ const readFile = (file: File): Promise<string> => {
 };
 
 export const RouteUploader = () => {
-    const { addRoute } = useRoutes();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         uppy.on('file-added', async (file) => {
             // TODO: handle error state
             const route = await readFile(file.data);
-            addRoute(file.name, route);
+            dispatch(addRoute(file.name, route));
         });
     }, []);
 

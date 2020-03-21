@@ -20,13 +20,14 @@ import { Sidebar } from './components/Sidebar/Sidebar';
 import marker from 'leaflet/dist/images/marker-icon.png';
 import marker2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { routesContext, useRoutesDataProvider } from './state/routesContext';
 import { useTrackData } from './hooks/useTrackData';
 import { trackContext } from './state/trackContext';
 
 import '@fortawesome/fontawesome-free/css/all.css';
 import { theme } from './styles/theme';
 import { Box } from 'rebass';
+import { Provider } from 'react-redux';
+import { configureStore } from './state/store';
 
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl;
@@ -37,22 +38,22 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
+const store = configureStore();
+
 const App: React.FC = () => {
     const trackData = useTrackData();
 
-    const routesData = useRoutesDataProvider();
-
     return (
-        <ThemeProvider theme={theme}>
-            <Box
-                className="App"
-                sx={{
-                    fontFamily: 'body',
-                    fontSize: 'body',
-                    color: 'text'
-                }}
-            >
-                <routesContext.Provider value={routesData}>
+        <Provider store={store}>
+            <ThemeProvider theme={theme}>
+                <Box
+                    className="App"
+                    sx={{
+                        fontFamily: 'body',
+                        fontSize: 'body',
+                        color: 'text'
+                    }}
+                >
                     <trackContext.Provider value={trackData}>
                         {/* TODO: do it like this: https://turbo87.github.io/sidebar-v2/examples/ */}
                         <HashRouter>
@@ -60,9 +61,9 @@ const App: React.FC = () => {
                             <LeafletMap />
                         </HashRouter>
                     </trackContext.Provider>
-                </routesContext.Provider>
-            </Box>
-        </ThemeProvider>
+                </Box>
+            </ThemeProvider>
+        </Provider>
     );
 };
 

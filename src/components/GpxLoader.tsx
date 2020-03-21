@@ -1,15 +1,17 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useLeaflet } from 'react-leaflet';
 
-import L, { LeafletEvent, GPXOptions } from 'leaflet';
+import L, { GPXOptions } from 'leaflet';
 import 'leaflet-gpx';
 
 import pinIconStart from 'leaflet-gpx/pin-icon-start.png';
 import pinIconEnd from 'leaflet-gpx/pin-icon-end.png';
 import pinShadow from 'leaflet-gpx/pin-shadow.png';
-import { Route } from '../state/routesContext';
 import { ROUTE_LINE_STYLE } from './leafletElementStyles';
-import { useRoutes } from '../hooks/useRoutes';
+import { useDispatch, useSelector } from 'react-redux';
+import { addRoute, routeParsed } from '../state/routes/routesActions';
+import { Route } from '../types/routes';
+import { getRoutes } from '../state/routes/routesReducer';
 
 const route1content = require('../test-data/13_paź_2019_09_06_10_1570956876047.gpx');
 const route2content = require('../test-data/29_gru_2019_13_17_57_rec.gpx');
@@ -46,11 +48,13 @@ const composeBounds = (routes: Route[]) => routes.reduce((carry: L.LatLngBounds 
 
 export const GpxLoader: React.FC = () => {
     const { map } = useLeaflet();
-    const { routes, addRoute, routeParsed } = useRoutes();
+
+    const routes = useSelector(getRoutes);
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        addRoute('13_paź_2019_09_06_10_1570956876047.gpx', route1content);
-        addRoute('29_gru_2019_13_17_57_rec.gpx', route2content);
+        dispatch(addRoute('13_paź_2019_09_06_10_1570956876047.gpx', route1content));
+        dispatch(addRoute('29_gru_2019_13_17_57_rec.gpx', route2content));
     }, []);
 
     useEffect(() => {
@@ -69,7 +73,7 @@ export const GpxLoader: React.FC = () => {
 
             const gpx = new L.GPX(route.content, options);
 
-            routeParsed(route.name, gpx);
+            dispatch(routeParsed(route.name, gpx));
 
             gpx.addTo(route.layers);
             route.layers.addTo(map);

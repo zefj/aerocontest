@@ -1,5 +1,4 @@
-import React, { useContext, useEffect } from 'react';
-import { Route, RoutesContext } from '../../state/routesContext';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { useLeaflet } from 'react-leaflet';
 import L, { LayerEvent, LatLng } from 'leaflet';
 
@@ -14,7 +13,10 @@ import {
     ROUTE_LINE_STYLE_OFFTRACK,
     ROUTE_LINE_STYLE_ONTRACK
 } from '../leafletElementStyles';
-import { useRoutes } from '../../hooks/useRoutes';
+import { useDispatch, useSelector } from 'react-redux';
+import { routeAnalysed } from '../../state/routes/routesActions';
+import { Route, RouteAnalysis } from '../../types/routes';
+import { getRoutes } from '../../state/routes/routesReducer';
 
 const polygonToGeoJSON = (polygon: L.Layer) => {
     if (polygon instanceof L.Circle) {
@@ -30,18 +32,13 @@ const polygonToGeoJSON = (polygon: L.Layer) => {
     throw new Error('Could not transform polygon to geojson data, unknown Layer type.');
 };
 
-export type RouteAnalysis = {
-    ontrackFragments: TrackFragments,
-    offtrackFragments: TrackFragments,
-};
-
 const performRouteAnalysis = (
     routePolyline: L.Polyline,
     track: L.FeatureGroup,
 ): RouteAnalysis => {
     const ontrackFragments: TrackFragments = [];
     const offtrackFragments: TrackFragments = [];
-    
+
     let lastPoint: 'offtrack' | 'ontrack' | null = null;
 
     routePolyline.getLatLngs().forEach((routePoint: LatLng | LatLng[] | LatLng[][]) => {
@@ -103,7 +100,7 @@ type TrackFragments = GPXLatLng[][];
 const analyseRoutes = (
     routes: Route[],
     track: L.FeatureGroup,
-    onRouteAnalysed: RoutesContext['routeAnalysed'],
+    onRouteAnalysed: any,
 ): void => {
     console.log('Running analysis...');
 
@@ -124,7 +121,7 @@ const analyseRoutes = (
         // onRouteAnalysed(route.name, routeAnalysis);
 
         const { offtrackFragments, ontrackFragments } = routeAnalysis;
-        
+
         if (!trackEmpty) {
             polylineLayer.setStyle(ROUTE_LINE_STYLE_ONTRACK);
         } else {
@@ -161,10 +158,48 @@ const drawOfftrackElements = (route: Route, offtrackFragments: TrackFragments) =
     });
 };
 
+const registerLeafletEventListeners = (
+    map: L.Map | undefined,
+    track: L.FeatureGroup<any> | null,
+    callback: () => void
+) => {
+    if (!map) {
+        return;
+    }
+
+    if (!track) {
+        return;
+    }
+
+    console.log('Registering leaflet event listeners...');
+
+    track.on('layeradd layerremove', (e: LayerEvent) => callback());
+    map.on(L.Draw.Event.EDITED, (e: LayerEvent) => callback());
+
+    return () => {
+        track.off('layeradd layerremove', (e: LayerEvent) => callback());
+        map.off(L.Draw.Event.EDITED, (e: LayerEvent) => callback());
+    };
+};
+
 export const RouteAnalyser: React.FC = () => {
     const { map } = useLeaflet();
     const { track } = useContext(trackContext);
-    const { routes, routeAnalysed } = useRoutes();
+    const routes = useSelector(getRoutes);
+
+    const dispatch = useDispatch();
+
+    const onRouteAnalysed = useCallback((name, analysis) => dispatch(routeAnalysed(name, analysis)), []);
+    const runAnalysis = useCallback(
+        () => {
+            if (!track) {
+                return;
+            }
+
+            analyseRoutes(routes, track, onRouteAnalysed);
+        },
+        [routes, track]
+    );
 
     useEffect(() => {
         if (!map) {
@@ -178,14 +213,16 @@ export const RouteAnalyser: React.FC = () => {
         if (!track) {
             return;
         }
-console.log('effect');
-        // Run initial analysis
-        analyseRoutes(routes, track, routeAnalysed);
 
-        track.on('layeradd layerremove', (e: LayerEvent) => analyseRoutes(routes, track, routeAnalysed));
-        // TODO: figure out if this event can be fired on track
-        map.on(L.Draw.Event.EDITED, (e: LayerEvent) => analyseRoutes(routes, track, routeAnalysed));
+        console.log('Running initial analysis...');
+
+        runAnalysis();
     }, [map, routes, track]);
+
+    useEffect(
+        () => registerLeafletEventListeners(map, track, runAnalysis),
+        [map, track, runAnalysis]
+    );
 
     return null;
 };
