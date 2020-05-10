@@ -1,5 +1,5 @@
 import { GPX } from "leaflet";
-import { RouteAnalysis } from '../../types/routes';
+import { RouteFragments } from '../../types/routes';
 
 export interface AddRouteAction {
     type: 'ADD_ROUTE',
@@ -11,13 +11,13 @@ export interface AddRouteAction {
 
 export interface RemoveRouteAction {
     type: 'REMOVE_ROUTE',
-    payload: string,
+    payload: { id: string },
 }
 
 export interface RouteParsedAction {
     type: 'ROUTE_PARSED',
     payload: {
-        name: string,
+        id: string,
         gpx: GPX,
     }
 }
@@ -25,15 +25,15 @@ export interface RouteParsedAction {
 export interface RouteAnalysedAction {
     type: 'ROUTE_ANALYSED',
     payload: {
-        name: string,
-        analysis: RouteAnalysis,
+        id: string,
+        analysis: RouteFragments,
     }
 }
 
 export interface ChangeRouteNameAction {
     type: 'CHANGE_ROUTE_NAME',
     payload: {
-        oldName: string,
+        id: string,
         name: string,
     }
 }
@@ -43,22 +43,22 @@ export const addRoute = (name: string, content: string): AddRouteAction => ({
     payload: { name, content }
 });
 
-export const removeRoute = (name: string): RemoveRouteAction => ({
+export const removeRoute = (id: string): RemoveRouteAction => ({
     type: 'REMOVE_ROUTE',
-    payload: name
+    payload: { id }
 });
 
-export const routeParsed = (name: string, gpx: GPX): RouteParsedAction => ({
+export const routeParsed = (id: string, gpx: GPX): RouteParsedAction => ({
     type: 'ROUTE_PARSED',
-    payload: { name, gpx }
+    payload: { id, gpx }
 });
 
-export const routeAnalysed = (name: string, analysis: RouteAnalysis): RouteAnalysedAction => ({
+export const routeAnalysed = (id: string, analysis: RouteFragments): RouteAnalysedAction => ({
     type: 'ROUTE_ANALYSED',
-    payload: { name, analysis }
+    payload: { id, analysis }
 });
 
-export const changeRouteName = (oldName: string, name: string): ChangeRouteNameAction => ({
+export const changeRouteName = (id: string, name: string): ChangeRouteNameAction => ({
     type: 'CHANGE_ROUTE_NAME',
-    payload: { oldName, name }
+    payload: { id, name }
 });

@@ -10,8 +10,8 @@ import pinShadow from 'leaflet-gpx/pin-shadow.png';
 import { ROUTE_LINE_STYLE } from './leafletElementStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { addRoute, routeParsed } from '../state/routes/routesActions';
-import { Route } from '../types/routes';
-import { getRoutes } from '../state/routes/routesReducer';
+import { Route, RouteLayers, RoutesLayers } from '../types/routes';
+import { getLayers, getLayersAsArray, getRoutes } from '../state/routes/routesReducer';
 
 const route1content = require('../test-data/13_paź_2019_09_06_10_1570956876047.gpx');
 const route2content = require('../test-data/29_gru_2019_13_17_57_rec.gpx');
@@ -34,7 +34,7 @@ const options: GPXOptions = {
 };
 
 // TODO: consider moving to utils if needed elsewhere
-const composeBounds = (routes: Route[]) => routes.reduce((carry: L.LatLngBounds | null, current: Route) => {
+const composeBounds = (layers: RouteLayers[]) => layers.reduce((carry: L.LatLngBounds | null, current: RouteLayers) => {
     if (!current.gpx) {
         return carry;
     }
@@ -50,6 +50,8 @@ export const GpxLoader: React.FC = () => {
     const { map } = useLeaflet();
 
     const routes = useSelector(getRoutes);
+    const layers = useSelector(getLayers);
+    const layersArray = useSelector(getLayersAsArray);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -67,25 +69,32 @@ export const GpxLoader: React.FC = () => {
         }
 
         routes.forEach((route: Route) => {
-            if (route.gpx) {
+            const routeLayers = layers[route.id];
+
+            if (routeLayers.gpx) {
                 return;
             }
 
             const gpx = new L.GPX(route.content, options);
+            dispatch(routeParsed(route.id, gpx));
 
-            dispatch(routeParsed(route.name, gpx));
-
-            gpx.addTo(route.layers);
-            route.layers.addTo(map);
+            gpx.addTo(routeLayers.layers);
+            routeLayers.layers.addTo(map);
         });
+    }, [map, routes]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
 
         // This is probably only temporary so I don't have to pan the map on each refresh
-        const bounds = composeBounds(routes);
+        const bounds = composeBounds(layersArray);
 
         if (bounds) {
             map.fitBounds(bounds);
         }
-    }, [map, routes]);
+    }, [map, layersArray]);
 
     return null;
 };

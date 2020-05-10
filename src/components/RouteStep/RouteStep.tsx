@@ -25,7 +25,7 @@ export const RouteStep: React.FC = () => {
                 <Text>Nie załadowano żadnych tras, przeciągnij pliki <code>.gpx</code> do okna powyżej, lub użyj przeglądarki plików.</Text>
             )}
 
-            {routes.map((route) => <RouteRecord route={route} />)}
+            {routes.map((route) => <RouteRecord key={`route-${route.id}`} route={route} />)}
         </>
     );
 };

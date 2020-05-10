@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useLeaflet } from 'react-leaflet';
 import L, { LayerEvent, LatLng } from 'leaflet';
 
@@ -15,8 +15,8 @@ import {
 } from '../leafletElementStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { routeAnalysed } from '../../state/routes/routesActions';
-import { Route, RouteAnalysis } from '../../types/routes';
-import { getRoutes } from '../../state/routes/routesReducer';
+import { Route, RouteFragments, RouteLayers } from '../../types/routes';
+import { getLayers, getLayersAsArray, getRoutes } from '../../state/routes/routesReducer';
 
 const polygonToGeoJSON = (polygon: L.Layer) => {
     if (polygon instanceof L.Circle) {
@@ -35,7 +35,7 @@ const polygonToGeoJSON = (polygon: L.Layer) => {
 const performRouteAnalysis = (
     routePolyline: L.Polyline,
     track: L.FeatureGroup,
-): RouteAnalysis => {
+): RouteFragments => {
     const ontrackFragments: TrackFragments = [];
     const offtrackFragments: TrackFragments = [];
 
@@ -98,7 +98,7 @@ interface GPXLatLng extends LatLng {
 type TrackFragments = GPXLatLng[][];
 
 const analyseRoutes = (
-    routes: Route[],
+    routes: RouteLayers[],
     track: L.FeatureGroup,
     onRouteAnalysed: any,
 ): void => {
@@ -134,7 +134,7 @@ const analyseRoutes = (
     });
 };
 
-const drawOfftrackElements = (route: Route, offtrackFragments: TrackFragments) => {
+const drawOfftrackElements = (route: RouteLayers, offtrackFragments: TrackFragments) => {
     route.offtrackMarkersLayer.clearLayers();
     route.offtrackFragmentsLayer.clearLayers();
 
@@ -182,23 +182,26 @@ const registerLeafletEventListeners = (
     };
 };
 
+// TODO: would it make sense if this worked on a single route passed via a prop?
+// Upsides: nicer code, probably easier to manage
+// Downsides: more event listeners
 export const RouteAnalyser: React.FC = () => {
     const { map } = useLeaflet();
     const { track } = useContext(trackContext);
-    const routes = useSelector(getRoutes);
+    const layersArray = useSelector(getLayersAsArray);
 
     const dispatch = useDispatch();
 
-    const onRouteAnalysed = useCallback((name, analysis) => dispatch(routeAnalysed(name, analysis)), []);
+    const onRouteAnalysed = useCallback((id, analysis) => dispatch(routeAnalysed(id, analysis)), []);
     const runAnalysis = useCallback(
         () => {
             if (!track) {
                 return;
             }
 
-            analyseRoutes(routes, track, onRouteAnalysed);
+            analyseRoutes(layersArray, track, onRouteAnalysed);
         },
-        [routes, track]
+        [layersArray, track]
     );
 
     useEffect(() => {
@@ -206,7 +209,7 @@ export const RouteAnalyser: React.FC = () => {
             return;
         }
 
-        if (!routes.length) {
+        if (!layersArray.length) {
             return;
         }
 
@@ -217,7 +220,7 @@ export const RouteAnalyser: React.FC = () => {
         console.log('Running initial analysis...');
 
         runAnalysis();
-    }, [map, routes, track]);
+    }, [map, layersArray, track]);
 
     useEffect(
         () => registerLeafletEventListeners(map, track, runAnalysis),

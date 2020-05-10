@@ -79,7 +79,7 @@ export const RouteRecord = ({ route }: { route: Route }) => {
             >
                 <RouteName
                     name={route.name}
-                    onChange={(name: string) => dispatch(changeRouteName(route.name, name))}
+                    onChange={(name: string) => dispatch(changeRouteName(route.id, name))}
                 />
 
                 <Box sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
@@ -88,7 +88,7 @@ export const RouteRecord = ({ route }: { route: Route }) => {
                         variant="destructiveOutline"
                         icon="fa-fw fas fa-times"
                         sx={{ height: '100%' }}
-                        onClick={() => dispatch(removeRoute(route.name))}
+                        onClick={() => dispatch(removeRoute(route.id))}
                     />
                 </Box>
             </Flex>

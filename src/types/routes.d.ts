@@ -1,16 +1,24 @@
-import { RouteAnalysis } from '../components/RouteAnalyser/RouteAnalyser';
+import { RouteFragments } from '../components/RouteAnalyser/RouteAnalyser';
 import L from 'leaflet';
 
 export type Route = {
+    id: string,
     // RoutesContext
     name: string,
     content: string, // todo: reconsider this name
-    gpx: GPX | null,
     // RouteAnalysisContext? Should this be further split into Layers context and Analysis context?
-    analysis: RouteAnalysis | null,
+    analysis: RouteFragments | null,
+}
+
+export type RouteLayers = {
+    gpx: GPX | null,
     layers: L.FeatureGroup,
     offtrackFragmentsLayer: L.LayerGroup,
     offtrackMarkersLayer: L.FeatureGroup,
+}
+
+export type RoutesLayers = {
+    [id: string]: RouteLayers
 }
 
 // TODO: split this into multiple contexts as seen above, to avoid issues with rerendering after analysis
@@ -19,11 +27,11 @@ export interface RoutesContext {
     addRoute: (name: string, content: string) => void,
     removeRoute: (name: string) => void,
     routeParsed: (name: string, gpx: GPX) => void,
-    routeAnalysed: (name: string, analysis: RouteAnalysis) => void,
+    routeAnalysed: (name: string, analysis: RouteFragments) => void,
     changeRouteName: (oldName: string, name: string) => void,
 }
 
-export type RouteAnalysis = {
+export type RouteFragments = {
     ontrackFragments: TrackFragments,
     offtrackFragments: TrackFragments,
 };

@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="">
+    <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="Implement route actions, other improvements">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/RouteStep/Route.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteStep/Route.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/GpxLoader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/GpxLoader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/RouteAnalyser/RouteAnalyser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteAnalyser/RouteAnalyser.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/RouteStep/RouteRecord.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteStep/RouteRecord.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/RouteStep/RouteStep.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteStep/RouteStep.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/RouteStep/RouteUploader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteStep/RouteUploader.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/state/routesContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/routesContext.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/styles/theme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/theme.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/routes/routesActions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/routes/routesActions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/routes/routesReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/routes/routesReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/routes.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/routes.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,7 +28,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1TndjalzqYn9LnjzCEGuoioDTZr" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="add_unversioned_files" value="$PROJECT_DIR$/node_modules/rebass/src/index.js" />
@@ -41,14 +45,15 @@
     <property name="ts.external.directory.path" value="C:\Users\filip\code\aerocontest\node_modules\typescript\lib" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\filip\code\aerocontest\src\styles" />
-      <recent name="C:\Users\filip\code\aerocontest\src\test-data" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\filip\code\aerocontest\src\state\routes" />
       <recent name="C:\Users\filip\code\aerocontest\src\test-data" />
       <recent name="C:\Users\filip\code\aerocontest\src" />
       <recent name="C:\Users\filip\gpx" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\filip\code\aerocontest\src\styles" />
+      <recent name="C:\Users\filip\code\aerocontest\src\test-data" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -89,7 +94,9 @@
       <workItem from="1581532508821" duration="77000" />
       <workItem from="1581612138979" duration="13780000" />
       <workItem from="1582132023366" duration="7789000" />
-      <workItem from="1582463179633" duration="11655000" />
+      <workItem from="1582463179633" duration="11746000" />
+      <workItem from="1584786944887" duration="17123000" />
+      <workItem from="1589107565931" duration="1076000" />
     </task>
     <task id="LOCAL-00001" summary="Rewrite RouteAnalyser&#10;&#10;From now on, we perform route analysis using GPX track points and &#10;`@turf/boolean-point-in-polygon`, instead of relying on &#10;`@turf/line-split`, which in turn relied heavily on the GeoJSON spec. &#10;This approach gives us a very convenient way of extrating the offroute &#10;start/end points, as well as an easy access to track point metadata.">
       <created>1581365291058</created>
@@ -154,7 +161,21 @@
       <option name="project" value="LOCAL" />
       <updated>1582487137052</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Implement route actions, other improvements">
+      <created>1582492055441</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1582492055441</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Add redux, replace routesContext with a redux solution">
+      <created>1584802812272</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1584802812272</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -186,6 +207,8 @@
     <MESSAGE value="Replace tailwind in favour of rebass" />
     <MESSAGE value="Overhaul navigation by replacing tabs with more intuitive step-based system" />
     <MESSAGE value="Add basic route uploader" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add basic route uploader" />
+    <MESSAGE value="Implement route actions, other improvements" />
+    <MESSAGE value="Add redux, replace routesContext with a redux solution" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add redux, replace routesContext with a redux solution" />
   </component>
 </project>
