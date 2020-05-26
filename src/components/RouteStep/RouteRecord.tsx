@@ -55,7 +55,7 @@ const RouteName = ({ name, onChange }: { name: string, onChange: (name: string) 
             sx={{ cursor: 'pointer' }}
             onClick={() => setIsEditing(true)}
         >
-            <Heading variant="routeName">
+            <Heading variant="routeName.editable">
                 {name}
             </Heading>
             <Text variant="instruction">Kliknij, aby zmienić nazwę...</Text>

@@ -1,4 +1,4 @@
-import { RouteFragments } from '../components/RouteAnalyser/RouteAnalyser';
+import { TrackFragments } from '../components/RouteAnalyser/RouteAnalyser';
 import L from 'leaflet';
 
 export type Route = {
@@ -19,6 +19,10 @@ export type RouteLayers = {
 
 export type RoutesLayers = {
     [id: string]: RouteLayers
+}
+
+export type RoutesAnalysis = {
+    [id: string]: RouteFragments | undefined
 }
 
 // TODO: split this into multiple contexts as seen above, to avoid issues with rerendering after analysis

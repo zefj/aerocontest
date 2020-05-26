@@ -9,7 +9,7 @@ import {
     RouteAnalysedAction,
     RouteParsedAction
 } from './routesActions';
-import { Route, RouteLayers, RoutesLayers } from '../../types/routes';
+import { Route, RouteLayers, RoutesAnalysis, RoutesLayers } from '../../types/routes';
 import { ApplicationState } from '../store';
 
 const createRoute = (name: string, content: string): Route => {
@@ -49,11 +49,13 @@ type RoutesReducerActions = AddRouteAction | RemoveRouteAction | RouteParsedActi
 const initialState: RoutesState = {
     entries: [],
     layers: {},
+    analysis: {},
 };
 
 export interface RoutesState {
     entries: Route[],
     layers: RoutesLayers,
+    analysis: RoutesAnalysis
 }
 
 export const routesReducer = (
@@ -71,23 +73,27 @@ export const routesReducer = (
                     ...state.layers,
                     [route.id]: createLayers(),
                 },
-                entries: [route, ...state.entries]
+                // analysis: {
+                //     ...state.analysis,
+                //     [route.id]: {},
+                // },
+                entries: [route, ...state.entries],
             };
         case 'REMOVE_ROUTE':
             const layers = {...state.layers};
+            const analysis = {...state.analysis};
 
             const routeLayers = layers[action.payload.id];
             routeLayers.layers.remove();
             delete layers[action.payload.id];
+            delete analysis[action.payload.id];
 
             return {
                 ...state,
                 layers,
                 entries: state.entries.filter((route) => {
                     return route.id !== action.payload.id;
-
-
-                })
+                }),
             };
         case 'ROUTE_PARSED':
             return {
@@ -101,18 +107,17 @@ export const routesReducer = (
                 },
             };
         case 'ROUTE_ANALYSED':
+            // @ts-ignore
+            // this is a workaround for redux-dev-tools crashing because of the size of this payload.
+            // TODO: figure out a better way or at least implement a debug flag
+            action.payload.analysis.toJSON = () => ({ hidden: 'to help redux devtools :)' });
+
             return {
                 ...state,
-                entries: state.entries.map((route) => {
-                    if (route.id !== action.payload.id) {
-                        return route;
-                    }
-
-                    return {
-                        ...route,
-                        ...action.payload,
-                    };
-                })
+                analysis: {
+                    ...state.analysis,
+                    [action.payload.id]: action.payload.analysis,
+                }
             };
         case 'CHANGE_ROUTE_NAME':
             return {
@@ -134,6 +139,7 @@ export const routesReducer = (
 };
 
 export const getRoutes = (state: ApplicationState) => state.routes.entries;
+export const getRoutesAnalysis = (state: ApplicationState) => state.routes.analysis;
 export const getLayers = (state: ApplicationState) => state.routes.layers;
 export const getLayersAsArray = createSelector(
     [getLayers],

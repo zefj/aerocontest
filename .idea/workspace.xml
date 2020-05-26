@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="Implement route actions, other improvements">
+    <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/components/SummaryStep/RouteSummary.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/SummaryStep/SummaryStep.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/Table.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/GpxLoader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/GpxLoader.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/RouteAnalyser/RouteAnalyser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteAnalyser/RouteAnalyser.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/RouteStep/RouteRecord.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteStep/RouteRecord.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/RouteStep/RouteStep.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteStep/RouteStep.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/state/routes/routesActions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/routes/routesActions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Sidebar/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Sidebar/Sidebar.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/state/routes/routesReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/routes/routesReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/styles/theme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/theme.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/types/routes.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/routes.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
@@ -96,7 +98,8 @@
       <workItem from="1582132023366" duration="7789000" />
       <workItem from="1582463179633" duration="11746000" />
       <workItem from="1584786944887" duration="17123000" />
-      <workItem from="1589107565931" duration="1076000" />
+      <workItem from="1589107565931" duration="19256000" />
+      <workItem from="1590494734682" duration="385000" />
     </task>
     <task id="LOCAL-00001" summary="Rewrite RouteAnalyser&#10;&#10;From now on, we perform route analysis using GPX track points and &#10;`@turf/boolean-point-in-polygon`, instead of relying on &#10;`@turf/line-split`, which in turn relied heavily on the GeoJSON spec. &#10;This approach gives us a very convenient way of extrating the offroute &#10;start/end points, as well as an easy access to track point metadata.">
       <created>1581365291058</created>
@@ -175,7 +178,14 @@
       <option name="project" value="LOCAL" />
       <updated>1584802812272</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Split routes state into entries and layers">
+      <created>1589108959172</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1589108959172</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -209,6 +219,7 @@
     <MESSAGE value="Add basic route uploader" />
     <MESSAGE value="Implement route actions, other improvements" />
     <MESSAGE value="Add redux, replace routesContext with a redux solution" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add redux, replace routesContext with a redux solution" />
+    <MESSAGE value="Split routes state into entries and layers" />
+    <option name="LAST_COMMIT_MESSAGE" value="Split routes state into entries and layers" />
   </component>
 </project>

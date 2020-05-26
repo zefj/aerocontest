@@ -15,8 +15,8 @@ import {
 } from '../leafletElementStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { routeAnalysed } from '../../state/routes/routesActions';
-import { Route, RouteFragments, RouteLayers } from '../../types/routes';
-import { getLayers, getLayersAsArray, getRoutes } from '../../state/routes/routesReducer';
+import { RouteFragments, RouteLayers, RoutesLayers } from '../../types/routes';
+import { getLayers } from '../../state/routes/routesReducer';
 
 const polygonToGeoJSON = (polygon: L.Layer) => {
     if (polygon instanceof L.Circle) {
@@ -86,19 +86,23 @@ const performRouteAnalysis = (
         fragment.push(p);
     });
 
-    return { offtrackFragments, ontrackFragments };
+    return {
+        // Filter empty fragments, if any
+        offtrackFragments: offtrackFragments.filter((e) => e.length > 0),
+        ontrackFragments: ontrackFragments.filter((e) => e.length > 0),
+    };
 };
 
-interface GPXLatLng extends LatLng {
+export interface GPXLatLng extends LatLng {
     meta: {
         time: Date,
     }
 }
 
-type TrackFragments = GPXLatLng[][];
+export type TrackFragments = GPXLatLng[][];
 
 const analyseRoutes = (
-    routes: RouteLayers[],
+    routes: RoutesLayers,
     track: L.FeatureGroup,
     onRouteAnalysed: any,
 ): void => {
@@ -106,7 +110,8 @@ const analyseRoutes = (
 
     const trackEmpty = track.getLayers().length === 0;
 
-    routes.forEach((route) => {
+    for (let [key, route] of Object.entries(routes)) {
+        // routes.forEach((route) => {
         if (!route.gpx) {
             return;
         }
@@ -118,9 +123,9 @@ const analyseRoutes = (
         }
 
         const routeAnalysis = performRouteAnalysis(polylineLayer, track);
-        // onRouteAnalysed(route.name, routeAnalysis);
+        onRouteAnalysed(key, routeAnalysis);
 
-        const { offtrackFragments, ontrackFragments } = routeAnalysis;
+        const {offtrackFragments, ontrackFragments} = routeAnalysis;
 
         if (!trackEmpty) {
             polylineLayer.setStyle(ROUTE_LINE_STYLE_ONTRACK);
@@ -131,7 +136,8 @@ const analyseRoutes = (
 
         // Do not draw offtrack fragments if the track is empty, this is purely visual
         drawOfftrackElements(route, !trackEmpty ? offtrackFragments : []);
-    });
+        // });
+    }
 };
 
 const drawOfftrackElements = (route: RouteLayers, offtrackFragments: TrackFragments) => {
@@ -188,7 +194,7 @@ const registerLeafletEventListeners = (
 export const RouteAnalyser: React.FC = () => {
     const { map } = useLeaflet();
     const { track } = useContext(trackContext);
-    const layersArray = useSelector(getLayersAsArray);
+    const layers = useSelector(getLayers);
 
     const dispatch = useDispatch();
 
@@ -199,9 +205,9 @@ export const RouteAnalyser: React.FC = () => {
                 return;
             }
 
-            analyseRoutes(layersArray, track, onRouteAnalysed);
+            analyseRoutes(layers, track, onRouteAnalysed);
         },
-        [layersArray, track]
+        [layers, track]
     );
 
     useEffect(() => {
@@ -209,7 +215,7 @@ export const RouteAnalyser: React.FC = () => {
             return;
         }
 
-        if (!layersArray.length) {
+        if (!layers.length) {
             return;
         }
 
@@ -220,7 +226,7 @@ export const RouteAnalyser: React.FC = () => {
         console.log('Running initial analysis...');
 
         runAnalysis();
-    }, [map, layersArray, track]);
+    }, [map, layers, track]);
 
     useEffect(
         () => registerLeafletEventListeners(map, track, runAnalysis),

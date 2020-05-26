@@ -75,7 +75,7 @@ const palette = {
 // Spacing and sizing system
 // Defined as constants to allow explicit references, instead of the ridiculous ambiguous default way
 export const fontSize = {
-    body: '16px',
+    body: '14px',
     12: `${12/16}rem`,
     14: `${14/16}rem`,
     16: `${16/16}rem`,
@@ -148,6 +148,7 @@ const preset = {
             lineHeight: 'heading',
             fontWeight: 'heading',
             letterSpacing: '-1px',
+            fontSize: fontSize['48'],
 
             h1: {
                 letterSpacing: '-1px', // nesting doesn't seem to inherit values... this is kinda dumb
@@ -185,11 +186,20 @@ const preset = {
         },
         routeName: {
             marginRight: space['8'],
-            fontSize: fontSize['16'],
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             marginBottom: 0,
+            fontSize: fontSize['20'],
+
+            editable: {
+                marginRight: space['8'],
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                marginBottom: 0,
+                fontSize: fontSize['16'],
+            },
         },
         instruction: {
             fontSize: fontSize['12'],
@@ -231,6 +241,25 @@ const preset = {
             '*:not(:only-child):not(:first-of-type)': {
                 marginLeft: space['8'],
             },
+        },
+        routeSummary: {
+            pb: space['16'],
+        },
+
+        table: {
+            width: '100%',
+            textAlign: 'center',
+            borderSpacing: 0,
+        },
+        th: {
+            px: space['4'],
+            py: space['8'],
+        },
+        td: {
+            px: space['4'],
+            py: space['8'],
+            borderBottom: 'solid 1px',
+            borderColor: palette['cool-grey-100']
         },
     },
     buttons: {
