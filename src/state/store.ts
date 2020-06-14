@@ -1,13 +1,16 @@
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import { routesReducer, RoutesState } from './routes/routesReducer';
 import { composeWithDevTools } from 'redux-devtools-extension'
+import { trackReducer, TrackState } from './track/trackReducer';
 
 export interface ApplicationState {
     routes: RoutesState,
+    track: TrackState,
 }
 
 const rootReducer = combineReducers<ApplicationState>({
-    routes: routesReducer
+    routes: routesReducer,
+    track: trackReducer,
 });
 
 export const configureStore = () => {

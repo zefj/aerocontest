@@ -20,8 +20,6 @@ import { Sidebar } from './components/Sidebar/Sidebar';
 import marker from 'leaflet/dist/images/marker-icon.png';
 import marker2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { useTrackData } from './hooks/useTrackData';
-import { trackContext } from './state/trackContext';
 
 import '@fortawesome/fontawesome-free/css/all.css';
 import { theme } from './styles/theme';
@@ -41,8 +39,6 @@ L.Icon.Default.mergeOptions({
 const store = configureStore();
 
 const App: React.FC = () => {
-    const trackData = useTrackData();
-
     return (
         <Provider store={store}>
             <ThemeProvider theme={theme}>
@@ -54,13 +50,11 @@ const App: React.FC = () => {
                         color: 'text'
                     }}
                 >
-                    <trackContext.Provider value={trackData}>
-                        {/* TODO: do it like this: https://turbo87.github.io/sidebar-v2/examples/ */}
-                        <HashRouter>
-                            <Sidebar />
-                            <LeafletMap />
-                        </HashRouter>
-                    </trackContext.Provider>
+                    {/* TODO: do it like this: https://turbo87.github.io/sidebar-v2/examples/ */}
+                    <HashRouter>
+                        <Sidebar />
+                        <LeafletMap />
+                    </HashRouter>
                 </Box>
             </ThemeProvider>
         </Provider>

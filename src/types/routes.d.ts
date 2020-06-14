@@ -12,6 +12,7 @@ export type Route = {
 
 export type RouteLayers = {
     gpx: GPX | null,
+    markers: L.LayerGroup,
     layers: L.FeatureGroup,
     offtrackFragmentsLayer: L.LayerGroup,
     offtrackMarkersLayer: L.FeatureGroup,

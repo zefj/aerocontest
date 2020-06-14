@@ -229,7 +229,7 @@ const RouteAnalysisTable = ({ analysis }: { analysis: RouteFragments }) => {
                         colSpan={3}
                         sx={{ textAlign: 'left' }}
                     >
-                        Suma
+                        Łącznie
                     </TableDataCell>
                     <TableDataCell>{ offtrackIntervalsSum }</TableDataCell>
                 </TableRow>

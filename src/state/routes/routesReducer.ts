@@ -30,14 +30,17 @@ const createRoute = (name: string, content: string): Route => {
 
 const createLayers = (): RouteLayers => {
     const layers = new L.FeatureGroup();
+    const markers = new L.LayerGroup();
     const offtrackFragmentsLayer = new L.LayerGroup();
     const offtrackMarkersLayer = new L.FeatureGroup();
 
+    markers.addTo(layers);
     offtrackFragmentsLayer.addTo(layers);
     offtrackMarkersLayer.addTo(layers);
 
     return {
         gpx: null,
+        markers,
         layers,
         offtrackFragmentsLayer,
         offtrackMarkersLayer,

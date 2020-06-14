@@ -1,26 +1,29 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useMemo } from 'react';
 import { useLeaflet } from 'react-leaflet';
 
 import L, { Control, DrawEvents } from 'leaflet';
 
 import 'leaflet-draw';
-import { trackContext } from '../../state/trackContext';
+import { useSelector } from 'react-redux';
+import { getTrack } from '../../state/track/trackReducer';
 
-const track = new L.FeatureGroup();
+// const track = new L.FeatureGroup();
+//
+// const options: Control.DrawConstructorOptions = {
+//     position: 'topleft',
+//     draw: {
+//         polyline: false,
+//         marker: false,
+//         circlemarker: false,
+//     },
+//     edit: {
+//         featureGroup: track,
+//     }
+// };
+//
+// const drawControl = new L.Control.Draw(options);
 
-const options: Control.DrawConstructorOptions = {
-    position: 'topleft',
-    draw: {
-        polyline: false,
-        marker: false,
-        circlemarker: false,
-    },
-    edit: {
-        featureGroup: track,
-    }
-};
-
-const drawControl = new L.Control.Draw(options);
+let drawControl: L.Control.Draw | null;
 
 type TrackDrawerProps = {
     drawingMode?: boolean,
@@ -28,20 +31,38 @@ type TrackDrawerProps = {
 
 export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
     const { map } = useLeaflet();
-    const { setTrack } = useContext(trackContext);
+    const { layer: trackLayer } = useSelector(getTrack);
+
+    useEffect(() => {
+        const options: Control.DrawConstructorOptions = {
+            position: 'topleft',
+            draw: {
+                polyline: false,
+                marker: false,
+                circlemarker: false,
+            },
+            edit: {
+                featureGroup: trackLayer,
+            }
+        };
+
+        drawControl = new L.Control.Draw(options);
+    }, [map]);
 
     useEffect(() => {
         if (!map) {
             return;
         }
 
-        setTrack(track);
-
-        map.addLayer(track);
+        map.addLayer(trackLayer);
     }, [map]);
 
     useEffect(() => {
         if (!map) {
+            return;
+        }
+
+        if (!drawControl) {
             return;
         }
 
@@ -50,7 +71,7 @@ export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
         } else {
             map.removeControl(drawControl);
         }
-    }, [map, drawingMode]);
+    }, [map, drawControl, drawingMode]);
 
     useEffect(() => {
         if (!map) {
@@ -63,7 +84,7 @@ export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
             const event: DrawEvents.Created = e;
             const layer = event.layer;
 
-            track.addLayer(layer);
+            trackLayer.addLayer(layer);
         });
     }, [map]);
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useLeaflet } from 'react-leaflet';
 
-import L, { GPXOptions } from 'leaflet';
+import L, { GPXOptions, LatLng } from 'leaflet';
 import 'leaflet-gpx';
 
 import pinIconStart from 'leaflet-gpx/pin-icon-start.png';
@@ -10,11 +10,12 @@ import pinShadow from 'leaflet-gpx/pin-shadow.png';
 import { ROUTE_LINE_STYLE } from './leafletElementStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { addRoute, routeParsed } from '../state/routes/routesActions';
-import { Route, RouteLayers, RoutesLayers } from '../types/routes';
+import { Route, RouteLayers } from '../types/routes';
 import { getLayers, getLayersAsArray, getRoutes } from '../state/routes/routesReducer';
+import { getPolylineLayer } from '../utils/getPolylineLayer';
 
-const route1content = require('../test-data/13_paź_2019_09_06_10_1570956876047.gpx');
-const route2content = require('../test-data/29_gru_2019_13_17_57_rec.gpx');
+const route1content = require('../test-data/9_maj_2020_19_06_55_1589052909021.gpx');
+const route2content = require('../test-data/21_maj_2020_18_51_11.gpx');
 
 /**
  * ts-ignore's because the modules released on npm are outdated
@@ -46,6 +47,8 @@ const composeBounds = (layers: RouteLayers[]) => layers.reduce((carry: L.LatLngB
     return current.gpx.getBounds();
 }, null);
 
+const markerCanvasRenderer = L.canvas();
+
 export const GpxLoader: React.FC = () => {
     const { map } = useLeaflet();
 
@@ -55,8 +58,8 @@ export const GpxLoader: React.FC = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(addRoute('13_paź_2019_09_06_10_1570956876047.gpx', route1content));
-        dispatch(addRoute('29_gru_2019_13_17_57_rec.gpx', route2content));
+        dispatch(addRoute('9_maj_2020_19_06_55_1589052909021.gpx', route1content));
+        // dispatch(addRoute('21_maj_2020_18_51_11.gpx', route2content));
     }, []);
 
     useEffect(() => {
@@ -77,6 +80,16 @@ export const GpxLoader: React.FC = () => {
 
             const gpx = new L.GPX(route.content, options);
             dispatch(routeParsed(route.id, gpx));
+
+            // TODO: only temporarily, move this out of here
+            const polylineLayer = getPolylineLayer(gpx);
+
+            if (polylineLayer) {
+                polylineLayer.getLatLngs().forEach((latLng: LatLng | LatLng[] | LatLng[][]) => {
+                    // @ts-ignore
+                    L.circleMarker(latLng, { weight: 1, renderer: markerCanvasRenderer }).addTo(map);
+                });
+            }
 
             gpx.addTo(routeLayers.layers);
             routeLayers.layers.addTo(map);

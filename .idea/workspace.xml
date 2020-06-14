@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/components/SummaryStep/RouteSummary.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/SummaryStep/SummaryStep.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/Table.tsx" afterDir="false" />
+    <list default="true" id="8b27161a-4738-419f-b15d-87fbdb417581" name="Default Changelist" comment="Add TrackUploader, integrate it with TrackDrawer">
+      <change afterPath="$PROJECT_DIR$/src/components/KmlLoader.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/TrackDrawer/TrackUploader.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/track/trackActions.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/track/trackReducer.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test-data/21_maj_2020_18_51_11.gpx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test-data/9_maj_2020_19_06_55_1589052909021.gpx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test-data/doc.kml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/GpxLoader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/GpxLoader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/LeafletMap.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/LeafletMap.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/RouteAnalyser/RouteAnalyser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteAnalyser/RouteAnalyser.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/RouteStep/RouteRecord.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouteStep/RouteRecord.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Sidebar/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Sidebar/Sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/SummaryStep/RouteSummary.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/SummaryStep/RouteSummary.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/TrackDrawer/TrackDrawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TrackDrawer/TrackDrawer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/TrackStep/TrackStep.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TrackStep/TrackStep.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useTrackData.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/state/routes/routesReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/routes/routesReducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/styles/theme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/theme.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/store.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/trackContext.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/types/routes.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/routes.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
@@ -35,8 +45,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="add_unversioned_files" value="$PROJECT_DIR$/node_modules/rebass/src/index.js" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/styles" />
+    <property name="add_unversioned_files" value="$PROJECT_DIR$/node_modules/rebass/src/index.js&#10;C:/Users/filip/code/aerocontest/node_modules/@types/leaflet-gpx/index.d.ts&#10;C:/Users/filip/code/aerocontest/node_modules/@turf/helpers/lib/geojson.d.ts&#10;C:/Users/filip/code/aerocontest/node_modules/leaflet-gpx/gpx.js&#10;C:/Users/filip/code/aerocontest/node_modules/leaflet-kml/L.KML.js" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/types" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="$PROJECT_DIR$/node_modules/eslint" />
@@ -48,14 +58,16 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\filip\code\aerocontest\src\state\routes" />
       <recent name="C:\Users\filip\code\aerocontest\src\test-data" />
+      <recent name="C:\Users\filip\code\aerocontest\src\state\routes" />
       <recent name="C:\Users\filip\code\aerocontest\src" />
       <recent name="C:\Users\filip\gpx" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\filip\code\aerocontest\src\styles" />
+      <recent name="C:\Users\filip\code\aerocontest\src\types" />
       <recent name="C:\Users\filip\code\aerocontest\src\test-data" />
+      <recent name="C:\Users\filip\code\aerocontest\src\components\TrackDrawer" />
+      <recent name="C:\Users\filip\code\aerocontest\src\styles" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -99,7 +111,10 @@
       <workItem from="1582463179633" duration="11746000" />
       <workItem from="1584786944887" duration="17123000" />
       <workItem from="1589107565931" duration="19256000" />
-      <workItem from="1590494734682" duration="385000" />
+      <workItem from="1590494734682" duration="3665000" />
+      <workItem from="1591452733449" duration="1374000" />
+      <workItem from="1591815670719" duration="7039000" />
+      <workItem from="1592125557391" duration="16130000" />
     </task>
     <task id="LOCAL-00001" summary="Rewrite RouteAnalyser&#10;&#10;From now on, we perform route analysis using GPX track points and &#10;`@turf/boolean-point-in-polygon`, instead of relying on &#10;`@turf/line-split`, which in turn relied heavily on the GeoJSON spec. &#10;This approach gives us a very convenient way of extrating the offroute &#10;start/end points, as well as an easy access to track point metadata.">
       <created>1581365291058</created>
@@ -185,7 +200,14 @@
       <option name="project" value="LOCAL" />
       <updated>1589108959172</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Begin implementing RouteSummary">
+      <created>1590495275807</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1590495275807</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -220,6 +242,7 @@
     <MESSAGE value="Implement route actions, other improvements" />
     <MESSAGE value="Add redux, replace routesContext with a redux solution" />
     <MESSAGE value="Split routes state into entries and layers" />
-    <option name="LAST_COMMIT_MESSAGE" value="Split routes state into entries and layers" />
+    <MESSAGE value="Begin implementing RouteSummary" />
+    <option name="LAST_COMMIT_MESSAGE" value="Begin implementing RouteSummary" />
   </component>
 </project>

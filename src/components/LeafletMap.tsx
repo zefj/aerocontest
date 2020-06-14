@@ -7,6 +7,9 @@ import { GpxLoader } from './GpxLoader';
 import { TrackDrawer } from './TrackDrawer/TrackDrawer';
 import { RouteAnalyser } from './RouteAnalyser/RouteAnalyser';
 import { Route } from 'react-router';
+import { KmlLoader } from './KmlLoader';
+
+const PREFER_CANVAS = false;
 
 export const LeafletMap: React.FC = () => {
     const [position] = useState<LatLngExpression>({
@@ -29,15 +32,16 @@ export const LeafletMap: React.FC = () => {
 
     return (
         <div className="map-container">
-            <Map center={position} zoom={zoom} zoomControl={false}>
-                {/*<TileLayer*/}
-                {/*    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'*/}
-                {/*    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"*/}
-                {/*/>*/}
+            <Map center={position} zoom={zoom} zoomControl={false} preferCanvas={PREFER_CANVAS}>
+                <TileLayer
+                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
                 <ZoomControl position="topleft" />
                 <ScaleControl position="bottomleft" imperial={false} />
 
                 <GpxLoader />
+                <KmlLoader />
                 <Route path="/track">
                     {({ match }) => (
                         <TrackDrawer drawingMode={Boolean(match)} />
