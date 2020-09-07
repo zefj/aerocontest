@@ -82,14 +82,14 @@ export const GpxLoader: React.FC = () => {
             dispatch(routeParsed(route.id, gpx));
 
             // TODO: only temporarily, move this out of here
-            const polylineLayer = getPolylineLayer(gpx);
+            // const polylineLayer = getPolylineLayer(gpx);
 
-            if (polylineLayer) {
-                polylineLayer.getLatLngs().forEach((latLng: LatLng | LatLng[] | LatLng[][]) => {
-                    // @ts-ignore
-                    L.circleMarker(latLng, { weight: 1, renderer: markerCanvasRenderer }).addTo(map);
-                });
-            }
+            // if (polylineLayer) {
+            //     polylineLayer.getLatLngs().forEach((latLng: LatLng | LatLng[] | LatLng[][]) => {
+            //         // @ts-ignore
+            //         L.circleMarker(latLng, { weight: 1, renderer: markerCanvasRenderer }).addTo(map);
+            //     });
+            // }
 
             gpx.addTo(routeLayers.layers);
             routeLayers.layers.addTo(map);
