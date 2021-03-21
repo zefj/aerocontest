@@ -16,6 +16,8 @@ export type RouteLayers = {
     layers: L.FeatureGroup,
     offtrackFragmentsLayer: L.LayerGroup,
     offtrackMarkersLayer: L.FeatureGroup,
+    ontrackFragmentsLayer: L.LayerGroup,
+    ontrackMarkersLayer: L.FeatureGroup,
 }
 
 export type RoutesLayers = {

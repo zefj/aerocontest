@@ -16,9 +16,13 @@ const createRoute = (name: string, content: string): Route => {
     const layers = new L.FeatureGroup();
     const offtrackFragmentsLayer = new L.LayerGroup();
     const offtrackMarkersLayer = new L.FeatureGroup();
+    const ontrackFragmentsLayer = new L.LayerGroup();
+    const ontrackMarkersLayer = new L.FeatureGroup();
 
     offtrackFragmentsLayer.addTo(layers);
     offtrackMarkersLayer.addTo(layers);
+    ontrackFragmentsLayer.addTo(layers);
+    ontrackMarkersLayer.addTo(layers);
 
     return {
         id: uuidv4(),
@@ -33,10 +37,14 @@ const createLayers = (): RouteLayers => {
     const markers = new L.LayerGroup();
     const offtrackFragmentsLayer = new L.LayerGroup();
     const offtrackMarkersLayer = new L.FeatureGroup();
+    const ontrackFragmentsLayer = new L.LayerGroup();
+    const ontrackMarkersLayer = new L.FeatureGroup();
 
     markers.addTo(layers);
     offtrackFragmentsLayer.addTo(layers);
     offtrackMarkersLayer.addTo(layers);
+    ontrackFragmentsLayer.addTo(layers);
+    ontrackMarkersLayer.addTo(layers);
 
     return {
         gpx: null,
@@ -44,6 +52,8 @@ const createLayers = (): RouteLayers => {
         layers,
         offtrackFragmentsLayer,
         offtrackMarkersLayer,
+        ontrackFragmentsLayer,
+        ontrackMarkersLayer,
     };
 };
 
