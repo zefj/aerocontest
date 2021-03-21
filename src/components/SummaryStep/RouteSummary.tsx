@@ -5,9 +5,8 @@ import { GPX } from 'leaflet';
 import { Box, Flex, Heading, Text } from 'rebass';
 import { space } from '../../styles/theme';
 import { Button } from '../Button';
-import { Route, RouteFragments } from '../../types/routes';
+import { GPXLatLng, Route, RouteFragments } from '../../types/routes';
 import { Table, TableBody, TableDataCell, TableHead, TableHeadCell, TableRow } from '../Table';
-import { GPXLatLng } from '../RouteAnalyser/RouteAnalyser';
 
 const RouteName = ({ name }: { name: string }) => {
     return (
@@ -23,9 +22,7 @@ export const RouteSummary = ({
     route,
     analysis,
     gpx,
-}: { route: Route, analysis: RouteFragments | undefined, gpx: GPX }) => {
-    // const dispatch = useDispatch();
-
+}: { route: Route, analysis: RouteFragments | null, gpx: GPX }) => {
     return (
         <Box variant="container">
             <Flex
@@ -153,13 +150,13 @@ const RouteData = ({ route }: { route: GPX }) => {
 };
 
 const calculateOfftrackIntervals = (analysis: RouteFragments) => {
-    if (!analysis.offtrackFragments) {
-        return [];
-    }
+    return analysis.map((value) => {
+        if (value.type === 'ontrack') {
+            return [];
+        }
 
-    return analysis.offtrackFragments.map((value) => {
-        return [value[0], value[value.length - 1]];
-    });
+        return [value.latLngs[0], value.latLngs[value.latLngs.length - 1]];
+    }).filter((e) => e.length);
 };
 
 const sumOfftrackIntervals = (offtrackIntervals: GPXLatLng[][]) => {

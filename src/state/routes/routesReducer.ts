@@ -7,28 +7,17 @@ import {
     ChangeRouteNameAction,
     RemoveRouteAction,
     RouteAnalysedAction,
-    RouteParsedAction
+    RouteParsedAction,
+    RoutesAnalysedAction
 } from './routesActions';
 import { Route, RouteLayers, RoutesAnalysis, RoutesLayers } from '../../types/routes';
 import { ApplicationState } from '../store';
 
 const createRoute = (name: string, content: string): Route => {
-    const layers = new L.FeatureGroup();
-    const offtrackFragmentsLayer = new L.LayerGroup();
-    const offtrackMarkersLayer = new L.FeatureGroup();
-    const ontrackFragmentsLayer = new L.LayerGroup();
-    const ontrackMarkersLayer = new L.FeatureGroup();
-
-    offtrackFragmentsLayer.addTo(layers);
-    offtrackMarkersLayer.addTo(layers);
-    ontrackFragmentsLayer.addTo(layers);
-    ontrackMarkersLayer.addTo(layers);
-
     return {
         id: uuidv4(),
         name,
         content,
-        analysis: null,
     };
 };
 
@@ -57,7 +46,7 @@ const createLayers = (): RouteLayers => {
     };
 };
 
-type RoutesReducerActions = AddRouteAction | RemoveRouteAction | RouteParsedAction | RouteAnalysedAction | ChangeRouteNameAction;
+type RoutesReducerActions = AddRouteAction | RemoveRouteAction | RouteParsedAction | RouteAnalysedAction | RoutesAnalysedAction | ChangeRouteNameAction;
 
 const initialState: RoutesState = {
     entries: [],
@@ -86,10 +75,6 @@ export const routesReducer = (
                     ...state.layers,
                     [route.id]: createLayers(),
                 },
-                // analysis: {
-                //     ...state.analysis,
-                //     [route.id]: {},
-                // },
                 entries: [route, ...state.entries],
             };
         case 'REMOVE_ROUTE':
@@ -131,6 +116,18 @@ export const routesReducer = (
                     ...state.analysis,
                     [action.payload.id]: action.payload.analysis,
                 }
+            };
+        case 'ROUTES_ANALYSED':
+            // @ts-ignore
+            // this is a workaround for redux-dev-tools crashing because of the size of this payload.
+            // TODO: figure out a better way or at least implement a debug flag
+            // Object.entries(action.payload.analyses).forEach(([_, analysis]) => {
+            //     analysis.latLngs.toJSON = () => ({ hidden: 'to help redux devtools :)' });
+            // });
+
+            return {
+                ...state,
+                analysis: action.payload.analyses
             };
         case 'CHANGE_ROUTE_NAME':
             return {

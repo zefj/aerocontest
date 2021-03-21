@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { Map, TileLayer, ZoomControl, ScaleControl } from 'react-leaflet'
 import { LatLngExpression } from 'leaflet';
+import { Route } from 'react-router';
 
 import './LeafletMap.scss';
 import { GpxLoader } from './GpxLoader';
 import { TrackDrawer } from './TrackDrawer/TrackDrawer';
 import { RouteAnalyser } from './RouteAnalyser/RouteAnalyser';
-import { Route } from 'react-router';
+import { AnalysisDrawer } from './RouteAnalyser/AnalysisDrawer';
 import { KmlLoader } from './KmlLoader';
 
 const PREFER_CANVAS = false;
@@ -48,6 +49,7 @@ export const LeafletMap: React.FC = () => {
                     )}
                 </Route>
                 <RouteAnalyser />
+                <AnalysisDrawer />
 
             </Map>
         </div>

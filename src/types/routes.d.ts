@@ -1,19 +1,16 @@
-import { TrackFragments } from '../components/RouteAnalyser/RouteAnalyser';
-import L from 'leaflet';
+import L, { LatLng } from 'leaflet';
 
 export type Route = {
     id: string,
-    // RoutesContext
     name: string,
-    content: string, // todo: reconsider this name
-    // RouteAnalysisContext? Should this be further split into Layers context and Analysis context?
-    analysis: RouteFragments | null,
+    content: string // todo: reconsider this name
 }
 
 export type RouteLayers = {
     gpx: GPX | null,
     markers: L.LayerGroup,
     layers: L.FeatureGroup,
+    // TODO: probably no longer need separate layers for off- and ontrack fragments
     offtrackFragmentsLayer: L.LayerGroup,
     offtrackMarkersLayer: L.FeatureGroup,
     ontrackFragmentsLayer: L.LayerGroup,
@@ -24,21 +21,19 @@ export type RoutesLayers = {
     [id: string]: RouteLayers
 }
 
-export type RoutesAnalysis = {
-    [id: string]: RouteFragments | undefined
+export interface GPXLatLng extends LatLng {
+    meta: {
+        time: Date,
+    }
 }
 
-// TODO: split this into multiple contexts as seen above, to avoid issues with rerendering after analysis
-export interface RoutesContext {
-    routes: Route[],
-    addRoute: (name: string, content: string) => void,
-    removeRoute: (name: string) => void,
-    routeParsed: (name: string, gpx: GPX) => void,
-    routeAnalysed: (name: string, analysis: RouteFragments) => void,
-    changeRouteName: (oldName: string, name: string) => void,
-}
-
-export type RouteFragments = {
-    ontrackFragments: TrackFragments,
-    offtrackFragments: TrackFragments,
+export type RouteFragment = {
+    type: 'ontrack' | 'offtrack',
+    latLngs: GPXLatLng[]
 };
+
+export type RouteFragments = RouteFragment[];
+
+export type RoutesAnalysis = {
+    [id: string]:? RouteFragments
+}

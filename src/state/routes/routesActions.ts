@@ -1,5 +1,5 @@
 import { GPX } from "leaflet";
-import { RouteFragments } from '../../types/routes';
+import { RoutesAnalysis, RouteFragments } from '../../types/routes';
 
 export interface AddRouteAction {
     type: 'ADD_ROUTE',
@@ -30,6 +30,13 @@ export interface RouteAnalysedAction {
     }
 }
 
+export interface RoutesAnalysedAction {
+    type: 'ROUTES_ANALYSED',
+    payload: {
+        analyses: RoutesAnalysis,
+    }
+}
+
 export interface ChangeRouteNameAction {
     type: 'CHANGE_ROUTE_NAME',
     payload: {
@@ -56,6 +63,11 @@ export const routeParsed = (id: string, gpx: GPX): RouteParsedAction => ({
 export const routeAnalysed = (id: string, analysis: RouteFragments): RouteAnalysedAction => ({
     type: 'ROUTE_ANALYSED',
     payload: { id, analysis }
+});
+
+export const routesAnalysed = (analyses: RoutesAnalysis): RoutesAnalysedAction => ({
+    type: 'ROUTES_ANALYSED',
+    payload: { analyses }
 });
 
 export const changeRouteName = (id: string, name: string): ChangeRouteNameAction => ({
