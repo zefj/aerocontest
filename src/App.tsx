@@ -14,6 +14,7 @@ import { HashRouter } from 'react-router-dom';
 
 import { LeafletMap } from './components/LeafletMap';
 import { Sidebar } from './components/Sidebar/Sidebar';
+import { RouteLayersContextProvider } from './components/RouteLayersContextProvider';
 
 // stupid hack so that leaflet's images work after going through webpack
 // https://github.com/PaulLeCam/react-leaflet/issues/255#issuecomment-388492108
@@ -53,7 +54,9 @@ const App: React.FC = () => {
                     {/* TODO: do it like this: https://turbo87.github.io/sidebar-v2/examples/ */}
                     <HashRouter>
                         <Sidebar />
-                        <LeafletMap />
+                        <RouteLayersContextProvider>
+                            <LeafletMap />
+                        </RouteLayersContextProvider>
                     </HashRouter>
                 </Box>
             </ThemeProvider>

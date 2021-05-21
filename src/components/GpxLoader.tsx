@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useLeaflet } from 'react-leaflet';
 
-import L, { GPXOptions, LatLng } from 'leaflet';
+import L, { GPXOptions } from 'leaflet';
 import 'leaflet-gpx';
 
 import pinIconStart from 'leaflet-gpx/pin-icon-start.png';
@@ -10,9 +10,9 @@ import pinShadow from 'leaflet-gpx/pin-shadow.png';
 import { ROUTE_LINE_STYLE } from './leafletElementStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { addRoute, routeParsed } from '../state/routes/routesActions';
-import { Route, RouteLayers } from '../types/routes';
-import { getLayers, getLayersAsArray, getRoutes } from '../state/routes/routesReducer';
-import { getPolylineLayer } from '../utils/getPolylineLayer';
+import { Route, Routes } from '../types/routes';
+import { getRoutes } from '../state/routes/routesReducer';
+import { RouteLayersContext } from '../state/store';
 
 const route1content = require('../test-data/9_maj_2020_19_06_55_1589052909021.gpx');
 const route2content = require('../test-data/21_maj_2020_18_51_11.gpx');
@@ -35,17 +35,21 @@ const options: GPXOptions = {
 };
 
 // TODO: consider moving to utils if needed elsewhere
-const composeBounds = (layers: RouteLayers[]) => layers.reduce((carry: L.LatLngBounds | null, current: RouteLayers) => {
-    if (!current.gpx) {
-        return carry;
-    }
+const composeBounds = (routes: Routes) => {
+    const routesArray = Object.values(routes);
 
-    if (carry) {
-        return carry.extend(current.gpx.getBounds());
-    }
+    return routesArray.reduce((carry: L.LatLngBounds | null, current: Route) => {
+        if (!current.gpx) {
+            return carry;
+        }
 
-    return current.gpx.getBounds();
-}, null);
+        if (carry) {
+            return carry.extend(current.gpx.getBounds());
+        }
+
+        return current.gpx.getBounds();
+    }, null)
+};
 
 const markerCanvasRenderer = L.canvas();
 
@@ -53,8 +57,7 @@ export const GpxLoader: React.FC = () => {
     const { map } = useLeaflet();
 
     const routes = useSelector(getRoutes);
-    const layers = useSelector(getLayers);
-    const layersArray = useSelector(getLayersAsArray);
+    const layers = useContext(RouteLayersContext);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -71,10 +74,10 @@ export const GpxLoader: React.FC = () => {
             return;
         }
 
-        routes.forEach((route: Route) => {
+        Object.entries(routes).forEach(([_key, route]) => {
             const routeLayers = layers[route.id];
 
-            if (routeLayers.gpx) {
+            if (route.gpx || !routeLayers) {
                 return;
             }
 
@@ -94,7 +97,16 @@ export const GpxLoader: React.FC = () => {
             gpx.addTo(routeLayers.layers);
             routeLayers.layers.addTo(map);
         });
-    }, [map, routes]);
+
+        Object.entries(layers).forEach(([id, layer]) => {
+            if (routes[id]) { 
+                return;
+            }
+
+            // Remove routes no longer present in state from the map
+            layer.layers.remove();
+        });
+    }, [map, routes, layers]);
 
     useEffect(() => {
         if (!map) {
@@ -102,12 +114,12 @@ export const GpxLoader: React.FC = () => {
         }
 
         // This is probably only temporary so I don't have to pan the map on each refresh
-        const bounds = composeBounds(layersArray);
+        const bounds = composeBounds(routes);
 
         if (bounds) {
             map.fitBounds(bounds);
         }
-    }, [map, layersArray]);
+    }, [map, routes]);
 
     return null;
 };

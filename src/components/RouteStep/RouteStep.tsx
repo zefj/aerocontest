@@ -8,6 +8,7 @@ import { getRoutes } from '../../state/routes/routesReducer';
 
 export const RouteStep: React.FC = () => {
     const routes = useSelector(getRoutes);
+    const amountOfRoutes = Object.keys(routes).length;
 
     return (
         <>
@@ -15,17 +16,17 @@ export const RouteStep: React.FC = () => {
                 <RouteUploader />
             </Box>
 
-            {routes.length > 0 && (
+            {amountOfRoutes > 0 && (
                 <Box variant="container">
                     <Heading variant="heading.h3">Załadowane trasy:</Heading>
                 </Box>
             )}
 
-            {routes.length === 0 && (
+            {amountOfRoutes === 0 && (
                 <Text>Nie załadowano żadnych tras, przeciągnij pliki <code>.gpx</code> do okna powyżej, lub użyj przeglądarki plików.</Text>
             )}
 
-            {routes.map((route) => <RouteRecord key={`route-${route.id}`} route={route} />)}
+            {Object.entries(routes).map(([_key, route]) => <RouteRecord key={`route-${route.id}`} route={route} />)}
         </>
     );
 };

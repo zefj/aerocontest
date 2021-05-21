@@ -3,11 +3,15 @@ import L, { LatLng, Polyline } from 'leaflet';
 export type Route = {
     id: string,
     name: string,
-    content: string // todo: reconsider this name
+    content: string, // todo: reconsider this name
+    gpx: GPX | null,
+}
+
+export type Routes = {
+    [id: string]: Route
 }
 
 export type RouteLayers = {
-    gpx: GPX | null,
     markers: L.LayerGroup,
     layers: L.FeatureGroup,
     // TODO: probably no longer need separate layers for off- and ontrack fragments

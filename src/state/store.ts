@@ -1,7 +1,9 @@
+import React from 'react';
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import { routesReducer, RoutesState } from './routes/routesReducer';
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { trackReducer, TrackState } from './track/trackReducer';
+import { RouteLayersContextType } from '../types/context';
 
 export interface ApplicationState {
     routes: RoutesState,
@@ -22,3 +24,5 @@ export const configureStore = () => {
 
     return createStore(rootReducer, {}, composedEnhancers);
 };
+
+export const RouteLayersContext = React.createContext<RouteLayersContextType>({ routes: {} });

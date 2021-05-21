@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { useLeaflet } from 'react-leaflet';
 import L, { LayerEvent } from 'leaflet';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,9 +9,10 @@ import { point } from '@turf/helpers';
 import { getPolylineLayer } from '../../utils/getPolylineLayer';
 import { useDispatch, useSelector } from 'react-redux';
 import { routesAnalysed } from '../../state/routes/routesActions';
-import { RoutesAnalysis, RoutesLayers, GPXLatLng, RouteFragments } from '../../types/routes';
-import { getLayers } from '../../state/routes/routesReducer';
+import { RoutesAnalysis, RoutesLayers, GPXLatLng, RouteFragments, Routes } from '../../types/routes';
+import { getRoutes } from '../../state/routes/routesReducer';
 import { getTrack } from '../../state/track/trackReducer';
+import { RouteLayersContext } from '../../state/store';
 
 const polygonToGeoJSON = (polygon: L.Layer) => {
     if (polygon instanceof L.Circle) {
@@ -126,7 +127,8 @@ const performRouteAnalysis = (
 };
 
 const analyseRoutes = (
-    routes: RoutesLayers,
+    entries: Routes,
+    layers: RoutesLayers,
     track: L.FeatureGroup,
 ): RoutesAnalysis => {
     console.log('Running analysis...');
@@ -138,12 +140,15 @@ const analyseRoutes = (
         return analyses;
     }
 
-    for (let [key, route] of Object.entries(routes)) {
-        if (!route.gpx) {
+    // TODO: switch to entries and drop layers argument
+    for (let [key, route] of Object.entries(entries)) {
+        const gpx = route.gpx;
+
+        if (!gpx) {
             continue;
         }
 
-        const polylineLayer = getPolylineLayer(route.gpx);
+        const polylineLayer = getPolylineLayer(gpx);
 
         if (!polylineLayer) {
             throw new Error('Polyline layer not found in route.');
@@ -153,7 +158,7 @@ const analyseRoutes = (
         
         analyses = {
             ...analyses,
-            [key]: routeAnalysis
+            [route.id]: routeAnalysis
         };
     }
 
@@ -200,7 +205,8 @@ export const RouteAnalyser: React.FC = () => {
 
     const { map } = useLeaflet();
     const { layer: trackLayer } = useSelector(getTrack);
-    const layers = useSelector(getLayers);
+    const layers = useContext(RouteLayersContext);
+    const routes = useSelector(getRoutes);
 
     const runAnalysis = useCallback(
         () => {
@@ -212,11 +218,11 @@ export const RouteAnalyser: React.FC = () => {
                 return;
             }
 
-            const analyses = analyseRoutes(layers, trackLayer);
+            const analyses = analyseRoutes(routes, layers, trackLayer);
 
             dispatch(routesAnalysed(analyses));
         },
-        [layers, trackLayer]
+        [layers, routes, trackLayer]
     );
 
     useEffect(

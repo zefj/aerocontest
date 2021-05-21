@@ -1,19 +1,20 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import L, { Polyline } from 'leaflet';
 
 import { useLeaflet } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { getLayers, getRoutesAnalysis } from '../../state/routes/routesReducer';
+import { getRoutes, getRoutesAnalysis } from '../../state/routes/routesReducer';
 import { RouteLayers, RouteFragments } from '../../types/routes';
 import { getPolylineLayer } from '../../utils/getPolylineLayer';
 import { ROUTE_LINE_STYLE_OFFTRACK, ROUTE_LINE_STYLE_ONTRACK } from '../leafletElementStyles';
 import { selectPolyline as selectPolylineAction } from '../../state/routes/routesActions';
+import { RouteLayersContext } from '../../state/store';
 
-const drawFragments = (analysisId: string, route: RouteLayers, fragments: RouteFragments, selectPolyline: (id: string, analysisId: string, ref: Polyline) => void) => {
-    route.offtrackMarkersLayer.clearLayers();
-    route.offtrackFragmentsLayer.clearLayers();
-    route.ontrackMarkersLayer.clearLayers();
-    route.ontrackFragmentsLayer.clearLayers();
+const drawFragments = (analysisId: string, routeLayers: RouteLayers, fragments: RouteFragments, selectPolyline: (id: string, analysisId: string, ref: Polyline) => void) => {
+    routeLayers.offtrackMarkersLayer.clearLayers();
+    routeLayers.offtrackFragmentsLayer.clearLayers();
+    routeLayers.ontrackMarkersLayer.clearLayers();
+    routeLayers.ontrackFragmentsLayer.clearLayers();
 
     fragments.forEach((fragment) => {
         const style = fragment.type === 'ontrack' ? ROUTE_LINE_STYLE_ONTRACK : ROUTE_LINE_STYLE_OFFTRACK;
@@ -27,21 +28,22 @@ const drawFragments = (analysisId: string, route: RouteLayers, fragments: RouteF
             // const entryPoint = fragment[fragment.length - 1];
 
             // L.marker([exitPoint.lat, exitPoint.lng])
-            //     .addTo(route.offtrackMarkersLayer)
+            //     .addTo(routeLayers.offtrackMarkersLayer)
             //     .bindTooltip(exitPoint.meta.time.toString(), OFFTRACK_POINT_TOOLTIP_OPTIONS);
 
             // L.marker([entryPoint.lat, entryPoint.lng])
-            //     .addTo(route.offtrackMarkersLayer)
+            //     .addTo(routeLayers.offtrackMarkersLayer)
             //     .bindTooltip(entryPoint.meta.time.toString(), OFFTRACK_POINT_TOOLTIP_OPTIONS);
         })
-        .addTo(route.offtrackFragmentsLayer);
+        .addTo(routeLayers.offtrackFragmentsLayer);
     });
 };
 
 export const AnalysisDrawer = () => {
     const { map } = useLeaflet();
     const analyses = useSelector(getRoutesAnalysis);
-    const layers = useSelector(getLayers);
+    const layers = useContext(RouteLayersContext);
+    const routes = useSelector(getRoutes);
     const trackEmpty = !Object.keys(analyses).length;
 
     const dispatch = useDispatch();
@@ -52,11 +54,13 @@ export const AnalysisDrawer = () => {
             return;
         }
 
-        for (let [key, route] of Object.entries(layers)) {
+        for (let [key, route] of Object.entries(routes)) {
             if (!route.gpx) {
                 continue;
             }
             
+            const routeLayers = layers[route.id];
+
             const polylineLayer = getPolylineLayer(route.gpx);
             
             if (!polylineLayer) {
@@ -75,7 +79,7 @@ export const AnalysisDrawer = () => {
             const analysis = analyses[key] || [];
             
             // Do not draw offtrack fragments if the track is empty, this is purely visual
-            drawFragments(key, route, analysis, selectPolylineFn); 
+            drawFragments(key, routeLayers, analysis, selectPolylineFn); 
         }
     }, [map, analyses]);
 
