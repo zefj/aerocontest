@@ -1,4 +1,4 @@
-import { GPX } from "leaflet";
+import { GPX, Polyline } from "leaflet";
 import { RoutesAnalysis, RouteFragments } from '../../types/routes';
 
 export interface AddRouteAction {
@@ -45,6 +45,24 @@ export interface ChangeRouteNameAction {
     }
 }
 
+export interface SelectPolylineAction {
+    type: 'SELECT_POLYLINE',
+    payload: {
+        id: string,
+        analysisId: string,
+        ref: Polyline,
+    }
+}
+
+export interface OverrideAnalysis {
+    type: 'OVERRIDE_ANALYSIS',
+    payload: {
+        id: string,
+        analysisId: string,
+        type: 'ontrack' | 'offtrack'
+    }
+}
+
 export const addRoute = (name: string, content: string): AddRouteAction => ({
     type: 'ADD_ROUTE',
     payload: { name, content }
@@ -73,4 +91,19 @@ export const routesAnalysed = (analyses: RoutesAnalysis): RoutesAnalysedAction =
 export const changeRouteName = (id: string, name: string): ChangeRouteNameAction => ({
     type: 'CHANGE_ROUTE_NAME',
     payload: { id, name }
+});
+
+export const selectPolyline = (id: string, analysisId: string, ref: Polyline): SelectPolylineAction => ({
+    type: 'SELECT_POLYLINE',
+    payload: { id, analysisId, ref }
+});
+
+export const deselectPolyline = () => ({
+    type: 'SELECT_POLYLINE',
+    payload: { id: undefined, ref: undefined }
+});
+
+export const overrideAnalysis = (id: string, analysisId: string, type: 'ontrack' | 'offtrack') => ({
+    type: 'OVERRIDE_ANALYSIS',
+    payload: { id, analysisId, type }
 });

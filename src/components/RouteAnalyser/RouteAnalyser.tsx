@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useLeaflet } from 'react-leaflet';
 import L, { LayerEvent } from 'leaflet';
+import { v4 as uuidv4 } from 'uuid';
 
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import circle from '@turf/circle';
@@ -82,6 +83,7 @@ const performRouteAnalysis = (
 
         if (!lastFragment) {
             lastFragment = {
+                id: uuidv4(),
                 type: pointOnTrack ? 'ontrack' : 'offtrack',
                 latLngs: []
             };
@@ -95,6 +97,7 @@ const performRouteAnalysis = (
             if (lastFragment.type === 'offtrack') {
                 lastFragment.latLngs.push(p);
                 fragment = {
+                    id: uuidv4(),
                     type: 'ontrack',
                     latLngs: []
                 };
@@ -108,6 +111,7 @@ const performRouteAnalysis = (
             if (lastFragment.type === 'ontrack') {
                 lastFragment.latLngs.push(p);
                 fragment = {
+                    id: uuidv4(),
                     type: 'offtrack',
                     latLngs: []
                 };

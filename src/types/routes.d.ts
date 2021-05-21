@@ -1,4 +1,4 @@
-import L, { LatLng } from 'leaflet';
+import L, { LatLng, Polyline } from 'leaflet';
 
 export type Route = {
     id: string,
@@ -28,6 +28,7 @@ export interface GPXLatLng extends LatLng {
 }
 
 export type RouteFragment = {
+    id: string,
     type: 'ontrack' | 'offtrack',
     latLngs: GPXLatLng[]
 };
@@ -36,4 +37,10 @@ export type RouteFragments = RouteFragment[];
 
 export type RoutesAnalysis = {
     [id: string]:? RouteFragments
+}
+
+export type Selected = {
+    id: string,
+    analysis_id: string,
+    ref: Polyline,
 }

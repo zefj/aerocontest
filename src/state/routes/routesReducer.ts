@@ -5,12 +5,14 @@ import { createSelector } from 'reselect';
 import {
     AddRouteAction,
     ChangeRouteNameAction,
+    OverrideAnalysis,
     RemoveRouteAction,
     RouteAnalysedAction,
     RouteParsedAction,
-    RoutesAnalysedAction
+    RoutesAnalysedAction,
+    SelectPolylineAction
 } from './routesActions';
-import { Route, RouteLayers, RoutesAnalysis, RoutesLayers } from '../../types/routes';
+import { Route, RouteFragments, RouteLayers, RoutesAnalysis, RoutesLayers, Selected } from '../../types/routes';
 import { ApplicationState } from '../store';
 
 const createRoute = (name: string, content: string): Route => {
@@ -46,18 +48,20 @@ const createLayers = (): RouteLayers => {
     };
 };
 
-type RoutesReducerActions = AddRouteAction | RemoveRouteAction | RouteParsedAction | RouteAnalysedAction | RoutesAnalysedAction | ChangeRouteNameAction;
+type RoutesReducerActions = AddRouteAction | RemoveRouteAction | RouteParsedAction | RouteAnalysedAction | RoutesAnalysedAction | ChangeRouteNameAction | SelectPolylineAction | OverrideAnalysis;
 
 const initialState: RoutesState = {
     entries: [],
     layers: {},
     analysis: {},
+    selected: undefined,
 };
 
 export interface RoutesState {
     entries: Route[],
     layers: RoutesLayers,
-    analysis: RoutesAnalysis
+    analysis: RoutesAnalysis,
+    selected: undefined | Selected,
 }
 
 export const routesReducer = (
@@ -118,12 +122,18 @@ export const routesReducer = (
                 }
             };
         case 'ROUTES_ANALYSED':
-            // @ts-ignore
             // this is a workaround for redux-dev-tools crashing because of the size of this payload.
             // TODO: figure out a better way or at least implement a debug flag
-            // Object.entries(action.payload.analyses).forEach(([_, analysis]) => {
-            //     analysis.latLngs.toJSON = () => ({ hidden: 'to help redux devtools :)' });
-            // });
+            Object.entries(action.payload.analyses).forEach(([_, analysis]) => {
+                if (!analysis) {
+                    return;
+                }
+    
+                Object.entries(analysis).forEach(([_, fragment]) => {
+                    // @ts-ignore
+                    fragment.latLngs.toJSON = () => ({ hidden: 'to help redux devtools :)' });
+                });
+            });
 
             return {
                 ...state,
@@ -143,6 +153,39 @@ export const routesReducer = (
                     };
                 })
             };
+        case 'SELECT_POLYLINE':
+            if (!action.payload.id) {
+                return {
+                    ...state,
+                    selected: undefined,
+                }
+            }
+
+            return {
+                ...state,
+                selected: {
+                    id: action.payload.id,
+                    analysis_id: action.payload.analysisId,
+                    ref: action.payload.ref,
+                }
+            };
+        case 'OVERRIDE_ANALYSIS':
+            return {
+                ...state,
+                analysis: {
+                    ...state.analysis,
+                    [action.payload.analysisId]: state.analysis[action.payload.analysisId]?.map((fragment) => {
+                        if (fragment.id === action.payload.id) {
+                            return {
+                                ...fragment,
+                                type: action.payload.type,
+                            };
+                        }
+
+                        return fragment;
+                    }) as RouteFragments
+                }
+            };
         default:
             return state;
     }
@@ -157,5 +200,31 @@ export const getLayersAsArray = createSelector(
         return Object.entries(layers).map(([key, value]) => {
             return { id: key, ...value };
         });
+    }
+);
+export const getSelectedPolyline = (state: ApplicationState) => state.routes.selected;
+export const findSelectedPolyline = createSelector(
+    getRoutesAnalysis,
+    state => state.routes.selected,
+    (analyses, selected) => {
+        if (!selected) {
+            return undefined;
+        }
+
+        const values = Object.values(analyses);
+
+        for (const analysis of values) {
+            if (!analysis) {
+                continue;
+            }
+
+            const selectedPolyline = analysis.find(polyline => polyline.id === selected.id);
+
+            if (selectedPolyline) {
+                return selectedPolyline;
+            }
+        }
+
+        return undefined;
     }
 );
