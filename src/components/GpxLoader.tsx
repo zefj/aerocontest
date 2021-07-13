@@ -7,7 +7,7 @@ import "leaflet-gpx";
 import pinIconStart from "leaflet-gpx/pin-icon-start.png";
 import pinIconEnd from "leaflet-gpx/pin-icon-end.png";
 import pinShadow from "leaflet-gpx/pin-shadow.png";
-import { ROUTE_LINE_STYLE } from "./leafletElementStyles";
+import { ROUTE_LINE_STYLE_BASE } from "./leafletElementStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { addRoute, routeParsed } from "../state/routes/routesActions";
 import { Route, Routes } from "../types/routes";
@@ -31,7 +31,7 @@ const options: GPXOptions = {
     endIconUrl: pinIconEnd,
     shadowUrl: pinShadow,
   },
-  polyline_options: ROUTE_LINE_STYLE,
+  polyline_options: ROUTE_LINE_STYLE_BASE,
 };
 
 // TODO: consider moving to utils if needed elsewhere
