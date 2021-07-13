@@ -10,7 +10,7 @@ import pinShadow from "leaflet-gpx/pin-shadow.png";
 import { ROUTE_LINE_STYLE_BASE } from "./leafletElementStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { addRoute, routeParsed } from "../state/routes/routesActions";
-import { Route, Routes } from "../types/routes";
+import { Route, Routes, RoutesLayers } from "../types/routes";
 import { getRoutes } from "../state/routes/routesReducer";
 import { RouteLayersContext } from "../state/store";
 
@@ -35,19 +35,21 @@ const options: GPXOptions = {
 };
 
 // TODO: consider moving to utils if needed elsewhere
-const composeBounds = (routes: Routes) => {
+const composeBounds = (routes: Routes, layers: RoutesLayers) => {
   const routesArray = Object.values(routes);
 
-  return routesArray.reduce((carry: L.LatLngBounds | null, current: Route) => {
-    if (!current.gpx) {
+  return routesArray.reduce((carry: L.LatLngBounds | null, route: Route) => {
+    const routeLayers = layers[route.id];
+
+    if (!routeLayers || !routeLayers.gpx) {
       return carry;
     }
 
     if (carry) {
-      return carry.extend(current.gpx.getBounds());
+      return carry.extend(routeLayers.gpx.getBounds());
     }
 
-    return current.gpx.getBounds();
+    return routeLayers.gpx.getBounds();
   }, null);
 };
 
@@ -57,7 +59,7 @@ export const GpxLoader: React.FC = () => {
   const { map } = useLeaflet();
 
   const routes = useSelector(getRoutes);
-  const layers = useContext(RouteLayersContext);
+  const { layers, setGpx } = useContext(RouteLayersContext);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -77,12 +79,13 @@ export const GpxLoader: React.FC = () => {
     Object.entries(routes).forEach(([_key, route]) => {
       const routeLayers = layers[route.id];
 
-      if (route.gpx || !routeLayers) {
+      if (!routeLayers || routeLayers.gpx) {
         return;
       }
 
       const gpx = new L.GPX(route.content, options);
-      dispatch(routeParsed(route.id, gpx));
+      setGpx(route.id, gpx);
+      dispatch(routeParsed(route.id));
 
       // TODO: only temporarily, move this out of here
       // const polylineLayer = getPolylineLayer(gpx);
@@ -114,7 +117,7 @@ export const GpxLoader: React.FC = () => {
     }
 
     // This is probably only temporary so I don't have to pan the map on each refresh
-    const bounds = composeBounds(routes);
+    const bounds = composeBounds(routes, layers);
 
     if (bounds) {
       map.fitBounds(bounds);

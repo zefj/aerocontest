@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 import { getRoutesAnalysis, getRoutes } from "../../state/routes/routesReducer";
 import { Text } from "rebass";
 import { RouteSummary } from "./RouteSummary";
+import { RouteLayersContext } from "../../state/store";
 
 export const SummaryStep: React.FC = () => {
   const routes = useSelector(getRoutes);
   const analysis = useSelector(getRoutesAnalysis);
+  const { layers } = useContext(RouteLayersContext);
   const amountOfRoutes = Object.keys(routes).length;
 
   return (
@@ -18,7 +20,7 @@ export const SummaryStep: React.FC = () => {
           key={`route-${route.id}`}
           route={route}
           analysis={analysis[route.id]}
-          gpx={routes[route.id].gpx}
+          gpx={layers[route.id]?.gpx}
         />
       ))}
     </>

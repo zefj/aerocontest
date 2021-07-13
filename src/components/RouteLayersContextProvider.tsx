@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import L from "leaflet";
 import { RouteLayers } from "../types/routes";
@@ -27,6 +27,7 @@ const createLayers = (): RouteLayers => {
     offtrackMarkersLayer,
     ontrackFragmentsLayer,
     ontrackMarkersLayer,
+    gpx: null,
   };
 };
 
@@ -35,7 +36,28 @@ export const RouteLayersContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [context, setContext] = useState<RouteLayersContextType>({});
+  const [{ layers: context }, setContext] = useState<RouteLayersContextType>({
+    layers: {},
+    setGpx: () => {},
+  });
+
+  const setGpx = useCallback(
+    (id, gpx) => {
+      const newContext = {
+        ...context,
+      };
+
+      if (!context[id]) {
+        return;
+      }
+
+      newContext[id].gpx = gpx;
+
+      setContext({ layers: newContext, setGpx });
+    },
+    [context]
+  );
+
   const routes = useSelector(getRoutes);
 
   useEffect(() => {
@@ -57,11 +79,11 @@ export const RouteLayersContextProvider = ({
       return;
     }
 
-    setContext(newContext);
+    setContext({ layers: newContext, setGpx });
   }, [routes]);
 
   return (
-    <RouteLayersContext.Provider value={context}>
+    <RouteLayersContext.Provider value={{ layers: context, setGpx }}>
       {children}
     </RouteLayersContext.Provider>
   );

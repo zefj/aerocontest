@@ -70,7 +70,7 @@ const drawFragments = (
 export const AnalysisDrawer = () => {
   const { map } = useLeaflet();
   const analyses = useSelector(getRoutesAnalysis);
-  const layers = useContext(RouteLayersContext);
+  const { layers } = useContext(RouteLayersContext);
   const routes = useSelector(getRoutes);
   const trackEmpty = !Object.keys(analyses).length;
 
@@ -88,13 +88,13 @@ export const AnalysisDrawer = () => {
     }
 
     for (let [key, route] of Object.entries(routes)) {
-      if (!route.gpx) {
+      const routeLayers = layers[route.id];
+
+      if (!routeLayers.gpx) {
         continue;
       }
 
-      const routeLayers = layers[route.id];
-
-      const polylineLayer = getPolylineLayer(route.gpx);
+      const polylineLayer = getPolylineLayer(routeLayers.gpx);
 
       if (!polylineLayer) {
         throw new Error("Polyline layer not found in route.");

@@ -1,3 +1,6 @@
+import { RoutesLayers } from "./routes";
+
 export type RouteLayersContextType = {
-  [id: string]: RouteLayers;
+  layers: RoutesLayers;
+  setGpx: (id, gpx) => void;
 };

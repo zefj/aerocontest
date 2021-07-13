@@ -18,7 +18,6 @@ export interface RouteParsedAction {
   type: "ROUTE_PARSED";
   payload: {
     id: string;
-    gpx: GPX;
   };
 }
 
@@ -73,9 +72,9 @@ export const removeRoute = (id: string): RemoveRouteAction => ({
   payload: { id },
 });
 
-export const routeParsed = (id: string, gpx: GPX): RouteParsedAction => ({
+export const routeParsed = (id: string): RouteParsedAction => ({
   type: "ROUTE_PARSED",
-  payload: { id, gpx },
+  payload: { id },
 });
 
 export const routeAnalysed = (

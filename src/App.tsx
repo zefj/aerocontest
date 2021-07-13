@@ -54,9 +54,9 @@ const App: React.FC = () => {
         >
           {/* TODO: do it like this: https://turbo87.github.io/sidebar-v2/examples/ */}
           <HashRouter>
-            <Sidebar />
-            <FragmentEditor />
             <RouteLayersContextProvider>
+              <Sidebar />
+              <FragmentEditor />
               <LeafletMap />
             </RouteLayersContextProvider>
           </HashRouter>

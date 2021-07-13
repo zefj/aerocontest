@@ -28,7 +28,6 @@ const createRoute = (name: string, content: string): Route => {
     id: uuidv4(),
     name,
     content,
-    gpx: null,
   };
 };
 
@@ -87,7 +86,6 @@ export const routesReducer = (
           ...state.entries,
           [action.payload.id]: {
             ...state.entries[action.payload.id],
-            gpx: action.payload.gpx,
           },
         },
       };

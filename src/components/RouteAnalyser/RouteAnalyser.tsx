@@ -148,13 +148,13 @@ const analyseRoutes = (
 
   // TODO: switch to entries and drop layers argument
   for (let [key, route] of Object.entries(entries)) {
-    const gpx = route.gpx;
+    const routeLayers = layers[route.id];
 
-    if (!gpx) {
+    if (!routeLayers.gpx) {
       continue;
     }
 
-    const polylineLayer = getPolylineLayer(gpx);
+    const polylineLayer = getPolylineLayer(routeLayers.gpx);
 
     if (!polylineLayer) {
       throw new Error("Polyline layer not found in route.");
@@ -211,7 +211,7 @@ export const RouteAnalyser: React.FC = () => {
 
   const { map } = useLeaflet();
   const { layer: trackLayer } = useSelector(getTrack);
-  const layers = useContext(RouteLayersContext);
+  const { layers } = useContext(RouteLayersContext);
   const routes = useSelector(getRoutes);
 
   const runAnalysis = useCallback(() => {

@@ -26,5 +26,6 @@ export const configureStore = () => {
 };
 
 export const RouteLayersContext = React.createContext<RouteLayersContextType>({
-  routes: {},
+  layers: {},
+  setGpx: () => {},
 });

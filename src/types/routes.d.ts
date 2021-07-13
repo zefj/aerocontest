@@ -4,7 +4,6 @@ export type Route = {
   id: string;
   name: string;
   content: string; // todo: reconsider this name
-  gpx: GPX | null;
 };
 
 export type Routes = {
@@ -19,6 +18,7 @@ export type RouteLayers = {
   offtrackMarkersLayer: L.FeatureGroup;
   ontrackFragmentsLayer: L.LayerGroup;
   ontrackMarkersLayer: L.FeatureGroup;
+  gpx: GPX | null;
 };
 
 export type RoutesLayers = {
