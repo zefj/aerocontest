@@ -46,5 +46,4 @@ export type RoutesAnalysis = {
 export type Selected = {
   id: string;
   analysis_id: string;
-  ref: Polyline;
 };

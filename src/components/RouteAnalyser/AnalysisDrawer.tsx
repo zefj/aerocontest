@@ -23,8 +23,8 @@ const drawFragments = (
   analysisId: string,
   routeLayers: RouteLayers,
   fragments: RouteFragments,
-  selectedPolyline: Selected | undefined,
-  selectPolyline: (id: string, analysisId: string, ref: Polyline) => void
+  selectedPolyline: Selected | null,
+  selectPolyline: (id: string, analysisId: string) => void
 ) => {
   routeLayers.offtrackMarkersLayer.clearLayers();
   routeLayers.offtrackFragmentsLayer.clearLayers();
@@ -44,7 +44,7 @@ const drawFragments = (
 
     polyline
       .on("click", function (e) {
-        selectPolyline(fragment.id, analysisId, polyline);
+        selectPolyline(fragment.id, analysisId);
 
         // const exitPoint = fragment[0];
         // const entryPoint = fragment[fragment.length - 1];
@@ -76,8 +76,7 @@ export const AnalysisDrawer = () => {
 
   const dispatch = useDispatch();
   const selectPolylineFn = useCallback(
-    (id, analysisId, ref) =>
-      dispatch(selectPolylineAction(id, analysisId, ref)),
+    (id, analysisId) => dispatch(selectPolylineAction(id, analysisId)),
     []
   );
   const selectedPolyline = useSelector(getSelectedPolyline);

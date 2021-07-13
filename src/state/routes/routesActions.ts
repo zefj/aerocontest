@@ -49,7 +49,6 @@ export interface SelectPolylineAction {
   payload: {
     id: string;
     analysisId: string;
-    ref: Polyline;
   };
 }
 
@@ -102,11 +101,10 @@ export const changeRouteName = (
 
 export const selectPolyline = (
   id: string,
-  analysisId: string,
-  ref: Polyline
+  analysisId: string
 ): SelectPolylineAction => ({
   type: "SELECT_POLYLINE",
-  payload: { id, analysisId, ref },
+  payload: { id, analysisId },
 });
 
 export const deselectPolyline = () => ({

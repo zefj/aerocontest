@@ -44,13 +44,13 @@ type RoutesReducerActions =
 const initialState: RoutesState = {
   entries: {},
   analysis: {},
-  selected: undefined,
+  selected: null,
 };
 
 export interface RoutesState {
   entries: Routes;
   analysis: RoutesAnalysis;
-  selected: undefined | Selected;
+  selected: null | Selected;
 }
 
 export const routesReducer = (
@@ -120,6 +120,7 @@ export const routesReducer = (
       return {
         ...state,
         analysis: action.payload.analyses,
+        selected: null,
       };
     case "CHANGE_ROUTE_NAME":
       return {
@@ -136,7 +137,7 @@ export const routesReducer = (
       if (!action.payload.id) {
         return {
           ...state,
-          selected: undefined,
+          selected: null,
         };
       }
 
@@ -145,7 +146,6 @@ export const routesReducer = (
         selected: {
           id: action.payload.id,
           analysis_id: action.payload.analysisId,
-          ref: action.payload.ref,
         },
       };
     case "OVERRIDE_ANALYSIS":
