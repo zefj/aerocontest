@@ -84,12 +84,12 @@ export const RouteRecord = ({ route }: { route: Route }) => {
         />
 
         <Flex sx={{ flexWrap: "nowrap", flexShrink: 0 }}>
-          <Button
+          {/* <Button
             variant="secondaryOutline"
             mr="4"
             icon="fa-fw fas fa-eye"
             sx={{ height: "100%" }}
-          />
+          /> */}
           <Button
             variant="destructiveOutline"
             icon="fa-fw fas fa-times"

@@ -43,14 +43,14 @@ export const RouteSummary = ({
       >
         <RouteName name={route.name} />
 
-        <Box sx={{ whiteSpace: "nowrap", flexShrink: 0 }}>
+        {/* <Box sx={{ whiteSpace: "nowrap", flexShrink: 0 }}>
           <Button
             variant="secondaryOutline"
             mr="4"
             icon="fa-fw fas fa-eye"
             sx={{ height: "100%" }}
           />
-        </Box>
+        </Box> */}
       </Flex>
 
       {gpx && <RouteData route={gpx} />}
@@ -95,45 +95,45 @@ const RouteData = ({ route }: { route: GPX }) => {
       {/*    <div className="text-gray-700 text-xs">returns the name of the GPX track</div>*/}
       {/*</div>*/}
       <Box variant="routeSummary">
-        <span>Początek trasy: </span>
+        <span>Początek</span>
         <Text fontWeight="bold">{moment(get_start_time).format()}</Text>
       </Box>
       <Box variant="routeSummary">
-        <span>Koniec trasy: </span>
+        <span>Koniec</span>
         <Text fontWeight="bold">{moment(get_end_time).format()}</Text>
       </Box>
       {/*<Box variant="routeSummary">*/}
-      {/*    <span>Czas trasy w minutach: </span>*/}
+      {/*    <span>Czas trasy w minutach</span>*/}
       {/*    <Text fontWeight="bold">{ get_moving_time / 1000 / 60 }</Text>*/}
       {/*    <div className="text-gray-700 text-xs">returns the moving time, in milliseconds</div>*/}
       {/*</Box>*/}
       <Box variant="routeSummary">
-        <span>Długość trasy:</span>
+        <span>Długość</span>
         <Text fontWeight="bold">{routeLength}</Text>
       </Box>
       <Box variant="routeSummary">
-        <span>Pokonany dystans:</span>
+        <span>Pokonany dystans</span>
         <Text fontWeight="bold">{distance.toFixed(2)} m</Text>
       </Box>
       {/*<Box variant="routeSummary">*/}
-      {/*    <span>get_moving_pace: </span>*/}
+      {/*    <span>get_moving_pace </span>*/}
       {/*    <Text fontWeight="bold">{ get_moving_pace }</Text>*/}
       {/*    <div className="text-gray-700 text-xs">returns the average moving pace in milliseconds per km</div>*/}
       {/*</Box>*/}
       <Box variant="routeSummary">
-        <span>Średnia prędkość w ruchu: </span>
+        <span>Średnia prędkość w ruchu</span>
         <Text fontWeight="bold">{get_moving_speed.toFixed(2)} km/h</Text>
       </Box>
       <Box variant="routeSummary">
-        <span>Średnia prędkość dla całej trasy: </span>
+        <span>Średnia prędkość dla całego przebiegu</span>
         <Text fontWeight="bold">{get_total_speed.toFixed(2)} km/h</Text>
       </Box>
       <Box variant="routeSummary">
-        <span>Minimalna wysokość nad poziomem morza: </span>
+        <span>Minimalna wysokość nad poziomem morza</span>
         <Text fontWeight="bold">{get_elevation_min} m</Text>
       </Box>
       <Box variant="routeSummary">
-        <span>Maksymalna wysokość nad poziomem morza: </span>
+        <span>Maksymalna wysokość nad poziomem morza</span>
         <Text fontWeight="bold">{get_elevation_max} m</Text>
       </Box>
       {/*<Box variant="routeSummary">*/}

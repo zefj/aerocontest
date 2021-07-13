@@ -41,7 +41,7 @@ export const RouteUploader = () => {
       uppy={uppy}
       locale={{
         strings: {
-          dropHereOr: "Przeciągnij i upuść pliki lub %{browse}",
+          dropHereOr: "Przeciągnij i upuść plik w formacie .gpx lub %{browse}",
           browse: "przeglądaj",
         },
       }}

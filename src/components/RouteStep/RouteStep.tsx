@@ -18,7 +18,7 @@ export const RouteStep: React.FC = () => {
 
       {amountOfRoutes > 0 && (
         <Box variant="container">
-          <Heading variant="heading.h3">Załadowane trasy:</Heading>
+          <Heading variant="heading.h3">Załadowane przebiegi</Heading>
         </Box>
       )}
 

@@ -41,7 +41,7 @@ export const TrackUploader = () => {
       uppy={uppy}
       locale={{
         strings: {
-          dropHereOr: "Przeciągnij i upuść pliki lub %{browse}",
+          dropHereOr: "Przeciągnij i upuść plik w formacie .kml lub %{browse}",
           browse: "przeglądaj",
         },
       }}
