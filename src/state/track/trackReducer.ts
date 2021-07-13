@@ -1,15 +1,12 @@
 import { LoadTrackAction } from "./trackActions";
 import { ApplicationState } from "../store";
-import L from "leaflet";
 
 export interface TrackState {
   content: string;
-  layer: L.FeatureGroup;
 }
 
 const initialState: TrackState = {
   content: "",
-  layer: new L.FeatureGroup(),
 };
 
 type TrackReducerActions = LoadTrackAction;

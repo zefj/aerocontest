@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useLeaflet } from "react-leaflet";
 import { useDispatch, useSelector } from "react-redux";
 import { getTrack } from "../state/track/trackReducer";
@@ -6,6 +6,7 @@ import { getTrack } from "../state/track/trackReducer";
 import L from "leaflet";
 import "leaflet-kml";
 import { loadTrack } from "../state/track/trackActions";
+import { RouteLayersContext } from "../state/store";
 
 const kmlFile = require("../test-data/doc.kml");
 
@@ -25,6 +26,7 @@ const loadKmlFile = (url: string, cb: Function) => {
 export const KmlLoader: React.FC = () => {
   const { map } = useLeaflet();
   const dispatch = useDispatch();
+  const { trackLayer } = useContext(RouteLayersContext);
 
   const track = useSelector(getTrack);
 
@@ -42,14 +44,14 @@ export const KmlLoader: React.FC = () => {
     }
 
     const parser = new DOMParser();
-    const kml = parser.parseFromString(track.content, "text/xml");
+    const kmlContent = parser.parseFromString(track.content, "text/xml");
 
     // @ts-ignore
-    const trackLayer = new L.KML(kml);
-    trackLayer
+    const kml = new L.KML(kmlContent);
+    kml
       .getLayers()[0]
       .getLayers()
-      .forEach((layer: any) => track.layer.addLayer(layer));
+      .forEach((layer: any) => trackLayer.addLayer(layer));
 
     map.fireEvent("TRACK_LOADED");
   }, [map, track.content]);

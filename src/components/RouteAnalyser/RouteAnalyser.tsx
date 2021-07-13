@@ -210,8 +210,7 @@ export const RouteAnalyser: React.FC = () => {
   const dispatch = useDispatch();
 
   const { map } = useLeaflet();
-  const { layer: trackLayer } = useSelector(getTrack);
-  const { layers } = useContext(RouteLayersContext);
+  const { layers, trackLayer } = useContext(RouteLayersContext);
   const routes = useSelector(getRoutes);
 
   const runAnalysis = useCallback(() => {

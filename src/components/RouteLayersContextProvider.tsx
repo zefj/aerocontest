@@ -31,59 +31,64 @@ const createLayers = (): RouteLayers => {
   };
 };
 
+const emptyTrackLayer = new L.FeatureGroup();
+
 export const RouteLayersContextProvider = ({
   children,
 }: {
   children: ReactNode;
 }) => {
-  const [{ layers: context }, setContext] = useState<RouteLayersContextType>({
-    layers: {},
-    setGpx: () => {},
-  });
+  const [{ layers, trackLayer }, setContext] = useState<RouteLayersContextType>(
+    {
+      layers: {},
+      trackLayer: emptyTrackLayer,
+      setGpx: () => {},
+    }
+  );
 
   const setGpx = useCallback(
     (id, gpx) => {
-      const newContext = {
-        ...context,
+      const newLayers = {
+        ...layers,
       };
 
-      if (!context[id]) {
+      if (!layers[id]) {
         return;
       }
 
-      newContext[id].gpx = gpx;
+      newLayers[id].gpx = gpx;
 
-      setContext({ layers: newContext, setGpx });
+      setContext({ layers: newLayers, trackLayer, setGpx });
     },
-    [context]
+    [layers]
   );
 
   const routes = useSelector(getRoutes);
 
   useEffect(() => {
     let shouldUpdate = false;
-    const newContext = {
-      ...context,
+    const newLayers = {
+      ...layers,
     };
 
     Object.entries(routes).forEach(([_key, route]) => {
-      if (context[route.id]) {
+      if (layers[route.id]) {
         return;
       }
 
       shouldUpdate = true;
-      newContext[route.id] = createLayers();
+      newLayers[route.id] = createLayers();
     });
 
     if (!shouldUpdate) {
       return;
     }
 
-    setContext({ layers: newContext, setGpx });
+    setContext({ layers: newLayers, trackLayer, setGpx });
   }, [routes]);
 
   return (
-    <RouteLayersContext.Provider value={{ layers: context, setGpx }}>
+    <RouteLayersContext.Provider value={{ layers, trackLayer, setGpx }}>
       {children}
     </RouteLayersContext.Provider>
   );

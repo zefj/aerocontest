@@ -1,4 +1,5 @@
 import React from "react";
+import L from "leaflet";
 import { applyMiddleware, createStore, combineReducers } from "redux";
 import { routesReducer, RoutesState } from "./routes/routesReducer";
 import { composeWithDevTools } from "redux-devtools-extension";
@@ -27,5 +28,6 @@ export const configureStore = () => {
 
 export const RouteLayersContext = React.createContext<RouteLayersContextType>({
   layers: {},
+  trackLayer: new L.FeatureGroup(),
   setGpx: () => {},
 });

@@ -6,6 +6,7 @@ import L, { Control, DrawEvents } from "leaflet";
 import "leaflet-draw";
 import { useSelector } from "react-redux";
 import { getTrack } from "../../state/track/trackReducer";
+import { RouteLayersContext } from "../../state/store";
 
 // const track = new L.FeatureGroup();
 //
@@ -31,7 +32,7 @@ type TrackDrawerProps = {
 
 export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
   const { map } = useLeaflet();
-  const { layer: trackLayer } = useSelector(getTrack);
+  const { trackLayer } = useContext(RouteLayersContext);
 
   useEffect(() => {
     const options: Control.DrawConstructorOptions = {
