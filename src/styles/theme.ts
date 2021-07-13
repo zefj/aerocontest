@@ -220,7 +220,12 @@ const preset = {
       borderRadius: "default",
       overflow: "hidden",
     },
-    sidebarContent: {
+    popup: {
+      variant: "variants.sidebar",
+      marginTop: space["12"],
+      backgroundColor: "rgb(255 255 255 / 90%)",
+    },
+    content: {
       px: space["24"],
       py: space["16"],
       overflow: "auto",
@@ -290,6 +295,14 @@ const preset = {
       variant: "buttons.outline",
       color: "secondary",
     },
+    greenOutline: {
+      variant: "buttons.outline",
+      color: palette["green-600"],
+      ":hover:not(.active), :focus:not(.active)": {
+        color: "background",
+        bg: palette["green-600"],
+      },
+    },
     destructive: {
       variant: "buttons.primary",
       bg: palette["red-600"],
@@ -298,6 +311,16 @@ const preset = {
     destructiveOutline: {
       variant: "buttons.outline",
       color: palette["red-500"],
+      ":hover:not(.active), :focus:not(.active)": {
+        color: "background",
+        bg: palette["red-600"],
+      },
+    },
+    icon: {
+      variant: "buttons.outline",
+      color: "muted",
+      boxShadow: 0,
+      padding: 0,
     },
 
     github: {

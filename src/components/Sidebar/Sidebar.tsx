@@ -46,7 +46,7 @@ export const Sidebar: React.FC = () => {
           />
         </Flex>
 
-        <Box variant="sidebarContent">
+        <Box variant="content">
           <Switch>
             <Route path="/(welcome|)">
               <WelcomeStep />

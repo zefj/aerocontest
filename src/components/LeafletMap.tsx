@@ -9,7 +9,6 @@ import { TrackDrawer } from "./TrackDrawer/TrackDrawer";
 import { RouteAnalyser } from "./RouteAnalyser/RouteAnalyser";
 import { AnalysisDrawer } from "./RouteAnalyser/AnalysisDrawer";
 import { KmlLoader } from "./KmlLoader";
-import { PolylinePopup } from "./PolylinePopup/PolylinePopup";
 
 const PREFER_CANVAS = false;
 
@@ -54,7 +53,6 @@ export const LeafletMap: React.FC = () => {
         </Route>
         <RouteAnalyser />
         <AnalysisDrawer />
-        <PolylinePopup />
       </Map>
     </div>
   );
