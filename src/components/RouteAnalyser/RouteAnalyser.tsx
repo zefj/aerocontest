@@ -149,7 +149,7 @@ const analyseRoutes = (
   for (let [, route] of Object.entries(entries)) {
     const routeLayers = layers[route.id];
 
-    if (!routeLayers.gpx) {
+    if (!routeLayers?.gpx) {
       continue;
     }
 
@@ -172,14 +172,9 @@ const analyseRoutes = (
 
 const registerLeafletEventListeners = (
   map: L.Map | undefined,
-  track: L.FeatureGroup<any> | null,
   callback: () => void
 ) => {
   if (!map) {
-    return;
-  }
-
-  if (!track) {
     return;
   }
 
@@ -212,6 +207,7 @@ export const RouteAnalyser: React.FC = () => {
   const { layers, trackLayer } = useContext(RouteLayersContext);
   const routes = useSelector(getRoutes);
 
+  // TODO: analysis is running multiple times for no reason. Fix this.
   const runAnalysis = useCallback(() => {
     if (!map) {
       return;
@@ -224,12 +220,14 @@ export const RouteAnalyser: React.FC = () => {
     const analyses = analyseRoutes(routes, layers, trackLayer);
 
     dispatch(routesAnalysed(analyses));
-  }, [dispatch, layers, map, routes, trackLayer]);
+  }, [routes]);
 
   useEffect(
-    () => registerLeafletEventListeners(map, trackLayer, runAnalysis),
-    [map, trackLayer, runAnalysis]
+    () => registerLeafletEventListeners(map, runAnalysis),
+    [runAnalysis]
   );
+
+  useEffect(() => runAnalysis(), [runAnalysis]);
 
   return null;
 };

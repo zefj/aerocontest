@@ -1,11 +1,9 @@
-import React, { useMemo } from "react";
-import moment from "moment";
+import React from "react";
 
 import { GPX } from "leaflet";
 import { Box, Flex, Heading, Text } from "rebass";
 import { space } from "../../styles/theme";
-import { Button } from "../Button";
-import { GPXLatLng, Route, RouteFragments } from "../../types/routes";
+import { Route, RouteFragments } from "../../types/routes";
 import {
   Table,
   TableBody,
@@ -14,6 +12,10 @@ import {
   TableHeadCell,
   TableRow,
 } from "../Table";
+import {
+  AnalysisData,
+  gatherAnalysisData,
+} from "../../utils/gatherAnalysisData";
 
 const RouteName = ({ name }: { name: string }) => {
   return (
@@ -32,6 +34,12 @@ export const RouteSummary = ({
   analysis: RouteFragments | null;
   gpx: GPX;
 }) => {
+  if (!analysis) {
+    return null;
+  }
+
+  const data = gatherAnalysisData(gpx, analysis);
+
   return (
     <Box variant="container">
       <Flex
@@ -53,41 +61,19 @@ export const RouteSummary = ({
         </Box> */}
       </Flex>
 
-      {gpx && <RouteData route={gpx} />}
+      {gpx && <RouteData data={data} />}
 
       {analysis && (
         <>
           <Heading variant="heading.h4">Precyzja lotu</Heading>
-          <RouteAnalysisTable analysis={analysis} />
+          <RouteAnalysisTable data={data} />
         </>
       )}
     </Box>
   );
 };
 
-const RouteData = ({ route }: { route: GPX }) => {
-  // const get_name = route.get_name();
-  const distance = route.get_distance();
-  const get_start_time = route.get_start_time().toString();
-  const get_end_time = route.get_end_time().toString();
-  // const get_moving_time = route.get_moving_time();
-  // const get_total_time = route.get_total_time();
-  // const get_moving_pace = route.get_moving_pace();
-  const get_moving_speed = route.get_moving_speed();
-  const get_total_speed = route.get_total_speed();
-  const get_elevation_min = route.get_elevation_min();
-  const get_elevation_max = route.get_elevation_max();
-  // const get_elevation_gain = route.get_elevation_gain();
-  // const get_elevation_loss = route.get_elevation_loss();
-  // const get_average_hr = route.get_average_hr();
-  // const get_average_cadence = route.get_average_cadence();
-  // const get_average_temp = route.get_average_temp();
-
-  const routeLength = getFormattedDurationLength(
-    moment(get_start_time),
-    moment(get_end_time)
-  );
-
+const RouteData = ({ data }: { data: AnalysisData }) => {
   return (
     <>
       {/*<div className="mb-2 text-sm text-gray-800">*/}
@@ -96,11 +82,11 @@ const RouteData = ({ route }: { route: GPX }) => {
       {/*</div>*/}
       <Box variant="routeSummary">
         <span>Początek</span>
-        <Text fontWeight="bold">{moment(get_start_time).format()}</Text>
+        <Text fontWeight="bold">{data.startTime}</Text>
       </Box>
       <Box variant="routeSummary">
         <span>Koniec</span>
-        <Text fontWeight="bold">{moment(get_end_time).format()}</Text>
+        <Text fontWeight="bold">{data.endTime}</Text>
       </Box>
       {/*<Box variant="routeSummary">*/}
       {/*    <span>Czas trasy w minutach</span>*/}
@@ -109,11 +95,11 @@ const RouteData = ({ route }: { route: GPX }) => {
       {/*</Box>*/}
       <Box variant="routeSummary">
         <span>Długość</span>
-        <Text fontWeight="bold">{routeLength}</Text>
+        <Text fontWeight="bold">{data.routeLength}</Text>
       </Box>
       <Box variant="routeSummary">
         <span>Pokonany dystans</span>
-        <Text fontWeight="bold">{distance.toFixed(2)} m</Text>
+        <Text fontWeight="bold">{data.distance}</Text>
       </Box>
       {/*<Box variant="routeSummary">*/}
       {/*    <span>get_moving_pace </span>*/}
@@ -122,19 +108,19 @@ const RouteData = ({ route }: { route: GPX }) => {
       {/*</Box>*/}
       <Box variant="routeSummary">
         <span>Średnia prędkość w ruchu</span>
-        <Text fontWeight="bold">{get_moving_speed.toFixed(2)} km/h</Text>
+        <Text fontWeight="bold">{data.movingSpeed}</Text>
       </Box>
       <Box variant="routeSummary">
         <span>Średnia prędkość dla całego przebiegu</span>
-        <Text fontWeight="bold">{get_total_speed.toFixed(2)} km/h</Text>
+        <Text fontWeight="bold">{data.totalSpeed}</Text>
       </Box>
       <Box variant="routeSummary">
         <span>Minimalna wysokość nad poziomem morza</span>
-        <Text fontWeight="bold">{get_elevation_min} m</Text>
+        <Text fontWeight="bold">{data.elevationMin}</Text>
       </Box>
       <Box variant="routeSummary">
         <span>Maksymalna wysokość nad poziomem morza</span>
-        <Text fontWeight="bold">{get_elevation_max} m</Text>
+        <Text fontWeight="bold">{data.elevationMax}</Text>
       </Box>
       {/*<Box variant="routeSummary">*/}
       {/*    <span>get_elevation_gain: </span>*/}
@@ -162,55 +148,7 @@ const RouteData = ({ route }: { route: GPX }) => {
   );
 };
 
-const calculateOfftrackIntervals = (analysis: RouteFragments) => {
-  return analysis
-    .map((value) => {
-      if (value.type === "ontrack") {
-        return [];
-      }
-
-      return [value.latLngs[0], value.latLngs[value.latLngs.length - 1]];
-    })
-    .filter((e) => e.length);
-};
-
-const sumOfftrackIntervals = (offtrackIntervals: GPXLatLng[][]) => {
-  const secondsSum = offtrackIntervals.reduce(
-    (carry: number, value: GPXLatLng[]) => {
-      const start = moment(value[0].meta.time);
-      const end = moment(value[1].meta.time);
-      const diff = end.diff(start);
-
-      carry += diff;
-      return carry;
-    },
-    0
-  );
-
-  return moment.utc(secondsSum).format("HH:mm:ss");
-};
-
-// TODO: milliseconds should probably be rounded off, to avoid issues with comparison (30.000 - 20.999 = 21)
-// maybe not necessarily here though, maybe somewhere closer to route analysis?
-// TODO: does not handle diffs larger than 24 hours, figure out a better solution
-const getFormattedDurationLength = (
-  start: moment.Moment,
-  end: moment.Moment
-) => {
-  const diff = end.diff(start);
-  return moment.utc(diff).format("HH:mm:ss");
-};
-
-const RouteAnalysisTable = ({ analysis }: { analysis: RouteFragments }) => {
-  const offtrackIntervals = useMemo(
-    () => calculateOfftrackIntervals(analysis),
-    [analysis]
-  );
-  const offtrackIntervalsSum = useMemo(
-    () => sumOfftrackIntervals(offtrackIntervals),
-    [offtrackIntervals]
-  );
-
+const RouteAnalysisTable = ({ data }: { data: AnalysisData }) => {
   return (
     <Table>
       <TableHead>
@@ -222,23 +160,18 @@ const RouteAnalysisTable = ({ analysis }: { analysis: RouteFragments }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {offtrackIntervals.map((interval, index) => {
-          const start = moment(interval[0].meta.time);
-          const end = moment(interval[1].meta.time);
-
+        {data.offtrackIntervals.map((interval) => {
           return (
-            <TableRow key={index}>
-              <TableDataCell>{index + 1}</TableDataCell>
-              <TableDataCell>{start.format("HH:mm:ss")}</TableDataCell>
-              <TableDataCell>{end.format("HH:mm:ss")}</TableDataCell>
-              <TableDataCell>
-                {getFormattedDurationLength(start, end)}
-              </TableDataCell>
+            <TableRow key={interval.index}>
+              <TableDataCell>{interval.index}</TableDataCell>
+              <TableDataCell>{interval.start}</TableDataCell>
+              <TableDataCell>{interval.end}</TableDataCell>
+              <TableDataCell>{interval.duration}</TableDataCell>
             </TableRow>
           );
         })}
 
-        {!offtrackIntervals.length && (
+        {!data.offtrackIntervals.length && (
           <TableRow>
             <TableDataCell>-</TableDataCell>
             <TableDataCell>-</TableDataCell>
@@ -251,7 +184,7 @@ const RouteAnalysisTable = ({ analysis }: { analysis: RouteFragments }) => {
           <TableDataCell colSpan={3} sx={{ textAlign: "left" }}>
             Łącznie
           </TableDataCell>
-          <TableDataCell>{offtrackIntervalsSum}</TableDataCell>
+          <TableDataCell>{data.offtrackIntervalsSum}</TableDataCell>
         </TableRow>
       </TableBody>
     </Table>

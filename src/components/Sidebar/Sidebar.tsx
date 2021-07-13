@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useSelector } from "react-redux";
 
 import { Switch, Route } from "react-router-dom";
 
@@ -7,11 +8,20 @@ import { RouteStep } from "../RouteStep/RouteStep";
 import "./sidebar.css";
 import { Box, Flex, Heading, Text } from "rebass";
 import { WelcomeStep } from "../WelcomeStep/WelcomeStep";
-import { ExternalLinkButton, LinkButton } from "../Button";
+import { Button, ExternalLinkButton, LinkButton } from "../Button";
 import { TrackStep } from "../TrackStep/TrackStep";
 import { SummaryStep } from "../SummaryStep/SummaryStep";
 
+import { getRoutes, getRoutesAnalysis } from "../../state/routes/routesReducer";
+import { exportData } from "../../utils/exportData";
+import { space } from "../../styles/theme";
+import { RouteLayersContext } from "../../state/store";
+
 export const Sidebar: React.FC = () => {
+  const analysis = useSelector(getRoutesAnalysis);
+  const routes = useSelector(getRoutes);
+  const { layers } = useContext(RouteLayersContext);
+
   return (
     <Box
       sx={{
@@ -99,9 +109,15 @@ export const Sidebar: React.FC = () => {
                 Wróć
               </LinkButton>
 
-              <LinkButton to="/export" variant="primaryOutline">
+              <Button
+                onClick={() => exportData(routes, layers, analysis)}
+                sx={{
+                  marginLeft: space["8"],
+                }}
+                variant="primaryOutline"
+              >
                 Eksportuj dane
-              </LinkButton>
+              </Button>
             </Route>
           </Switch>
         </Flex>

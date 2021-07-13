@@ -40,7 +40,7 @@ export type RouteFragment = {
 export type RouteFragments = RouteFragment[];
 
 export type RoutesAnalysis = {
-  [id: string]: ?RouteFragments;
+  [id: string]: RouteFragments;
 };
 
 export type Selected = {
