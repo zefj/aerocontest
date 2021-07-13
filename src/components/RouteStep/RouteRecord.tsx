@@ -1,103 +1,109 @@
-import { Box, Flex, Heading, Text } from 'rebass';
-import { space } from '../../styles/theme';
-import { Button } from '../Button';
-import React, { useEffect, useRef, useState } from 'react';
-import { Input } from '@rebass/forms';
-import { useDispatch } from 'react-redux';
-import { changeRouteName, removeRoute } from '../../state/routes/routesActions';
-import { Route } from '../../types/routes';
+import { Box, Flex, Heading, Text } from "rebass";
+import { space } from "../../styles/theme";
+import { Button } from "../Button";
+import React, { useEffect, useRef, useState } from "react";
+import { Input } from "@rebass/forms";
+import { useDispatch } from "react-redux";
+import { changeRouteName, removeRoute } from "../../state/routes/routesActions";
+import { Route } from "../../types/routes";
 
 type RouteNameInputProps = {
-    defaultValue: string,
-    onAccept: (name: string | null) => void,
+  defaultValue: string;
+  onAccept: (name: string | null) => void;
 };
 
-const RouteNameInput = ({ defaultValue, onAccept }: RouteNameInputProps ) => {
-    const ref = useRef<HTMLInputElement>(null);
+const RouteNameInput = ({ defaultValue, onAccept }: RouteNameInputProps) => {
+  const ref = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        const input = ref.current;
+  useEffect(() => {
+    const input = ref.current;
 
-        if (input) {
-            input.focus();
-        }
-    }, [ref.current]);
-
-    return (
-        <Input
-            ref={ref}
-            id='name'
-            name='name'
-            type='text'
-            defaultValue={defaultValue}
-            onBlur={() => onAccept(ref.current && ref.current.value)}
-        />
-    );
-};
-
-const RouteName = ({ name, onChange }: { name: string, onChange: (name: string) => void }) => {
-    const [isEditing, setIsEditing] = useState(false);
-
-    if (isEditing) {
-        return (
-            <RouteNameInput
-                defaultValue={name}
-                onAccept={(name) => {
-                    setIsEditing(false);
-                    name && onChange(name);
-                }}
-            />
-        );
+    if (input) {
+      input.focus();
     }
+  }, [ref.current]);
 
+  return (
+    <Input
+      ref={ref}
+      id="name"
+      name="name"
+      type="text"
+      defaultValue={defaultValue}
+      onBlur={() => onAccept(ref.current && ref.current.value)}
+    />
+  );
+};
+
+const RouteName = ({
+  name,
+  onChange,
+}: {
+  name: string;
+  onChange: (name: string) => void;
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  if (isEditing) {
     return (
-        <Box
-            sx={{ cursor: 'pointer' }}
-            onClick={() => setIsEditing(true)}
-        >
-            <Heading variant="routeName.editable">
-                {name}
-            </Heading>
-            <Text variant="instruction">Kliknij, aby zmienić nazwę...</Text>
-        </Box>
+      <RouteNameInput
+        defaultValue={name}
+        onAccept={(name) => {
+          setIsEditing(false);
+          name && onChange(name);
+        }}
+      />
     );
+  }
+
+  return (
+    <Box sx={{ cursor: "pointer" }} onClick={() => setIsEditing(true)}>
+      <Heading variant="routeName.editable">{name}</Heading>
+      <Text variant="instruction">Kliknij, aby zmienić nazwę...</Text>
+    </Box>
+  );
 };
 
 export const RouteRecord = ({ route }: { route: Route }) => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    return (
-        <Box variant="container">
-            <Flex
-                mb={space['12']}
-                sx={{
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    // Setting min-height prevents the following rows from jumping 1 pixel up when the input is rendered
-                    minHeight: space['48']
-                }}
-            >
-                <RouteName
-                    name={route.name}
-                    onChange={(name: string) => dispatch(changeRouteName(route.id, name))}
-                />
+  return (
+    <Box variant="container">
+      <Flex
+        mb={space["12"]}
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          // Setting min-height prevents the following rows from jumping 1 pixel up when the input is rendered
+          minHeight: space["48"],
+        }}
+      >
+        <RouteName
+          name={route.name}
+          onChange={(name: string) => dispatch(changeRouteName(route.id, name))}
+        />
 
-                <Box sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
-                    <Button variant="secondaryOutline" mr="4" icon="fa-fw fas fa-eye" sx={{ height: '100%' }} />
-                    <Button
-                        variant="destructiveOutline"
-                        icon="fa-fw fas fa-times"
-                        sx={{ height: '100%' }}
-                        onClick={() => dispatch(removeRoute(route.id))}
-                    />
-                </Box>
-            </Flex>
-
-            {/*{route.gpx && (*/}
-            {/*    <RouteData route={route.gpx} />*/}
-            {/*)}*/}
+        <Box sx={{ whiteSpace: "nowrap", flexShrink: 0 }}>
+          <Button
+            variant="secondaryOutline"
+            mr="4"
+            icon="fa-fw fas fa-eye"
+            sx={{ height: "100%" }}
+          />
+          <Button
+            variant="destructiveOutline"
+            icon="fa-fw fas fa-times"
+            sx={{ height: "100%" }}
+            onClick={() => dispatch(removeRoute(route.id))}
+          />
         </Box>
-    );
+      </Flex>
+
+      {/*{route.gpx && (*/}
+      {/*    <RouteData route={route.gpx} />*/}
+      {/*)}*/}
+    </Box>
+  );
 };
 
 // type RouteDataProps = {

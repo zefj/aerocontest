@@ -1,11 +1,11 @@
-import React, { useEffect, useContext, useMemo } from 'react';
-import { useLeaflet } from 'react-leaflet';
+import React, { useEffect, useContext, useMemo } from "react";
+import { useLeaflet } from "react-leaflet";
 
-import L, { Control, DrawEvents } from 'leaflet';
+import L, { Control, DrawEvents } from "leaflet";
 
-import 'leaflet-draw';
-import { useSelector } from 'react-redux';
-import { getTrack } from '../../state/track/trackReducer';
+import "leaflet-draw";
+import { useSelector } from "react-redux";
+import { getTrack } from "../../state/track/trackReducer";
 
 // const track = new L.FeatureGroup();
 //
@@ -26,67 +26,67 @@ import { getTrack } from '../../state/track/trackReducer';
 let drawControl: L.Control.Draw | null;
 
 type TrackDrawerProps = {
-    drawingMode?: boolean,
-}
+  drawingMode?: boolean;
+};
 
 export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
-    const { map } = useLeaflet();
-    const { layer: trackLayer } = useSelector(getTrack);
+  const { map } = useLeaflet();
+  const { layer: trackLayer } = useSelector(getTrack);
 
-    useEffect(() => {
-        const options: Control.DrawConstructorOptions = {
-            position: 'topleft',
-            draw: {
-                polyline: false,
-                marker: false,
-                circlemarker: false,
-            },
-            edit: {
-                featureGroup: trackLayer,
-            }
-        };
+  useEffect(() => {
+    const options: Control.DrawConstructorOptions = {
+      position: "topleft",
+      draw: {
+        polyline: false,
+        marker: false,
+        circlemarker: false,
+      },
+      edit: {
+        featureGroup: trackLayer,
+      },
+    };
 
-        drawControl = new L.Control.Draw(options);
-    }, [map]);
+    drawControl = new L.Control.Draw(options);
+  }, [map]);
 
-    useEffect(() => {
-        if (!map) {
-            return;
-        }
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
 
-        map.addLayer(trackLayer);
-    }, [map]);
+    map.addLayer(trackLayer);
+  }, [map]);
 
-    useEffect(() => {
-        if (!map) {
-            return;
-        }
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
 
-        if (!drawControl) {
-            return;
-        }
+    if (!drawControl) {
+      return;
+    }
 
-        if (drawingMode) {
-            map.addControl(drawControl);
-        } else {
-            map.removeControl(drawControl);
-        }
-    }, [map, drawControl, drawingMode]);
+    if (drawingMode) {
+      map.addControl(drawControl);
+    } else {
+      map.removeControl(drawControl);
+    }
+  }, [map, drawControl, drawingMode]);
 
-    useEffect(() => {
-        if (!map) {
-            return;
-        }
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
 
-        map.on(L.Draw.Event.CREATED, (e: any) => {
-            // The event is actually DrawEvents.Created, but there is no matching definition for the `on` method,
-            // which makes typescript complain about no matching overload. TODO I guess?
-            const event: DrawEvents.Created = e;
-            const layer = event.layer;
+    map.on(L.Draw.Event.CREATED, (e: any) => {
+      // The event is actually DrawEvents.Created, but there is no matching definition for the `on` method,
+      // which makes typescript complain about no matching overload. TODO I guess?
+      const event: DrawEvents.Created = e;
+      const layer = event.layer;
 
-            trackLayer.addLayer(layer);
-        });
-    }, [map]);
+      trackLayer.addLayer(layer);
+    });
+  }, [map]);
 
-    return null;
+  return null;
 };

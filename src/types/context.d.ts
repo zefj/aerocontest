@@ -1,3 +1,3 @@
 export type RouteLayersContextType = {
-    [id: string]: RouteLayers
-}
+  [id: string]: RouteLayers;
+};
