@@ -15,7 +15,6 @@ import { getRoutes } from "../state/routes/routesReducer";
 import { RouteLayersContext } from "../state/store";
 
 const route1content = require("../test-data/9_maj_2020_19_06_55_1589052909021.gpx");
-const route2content = require("../test-data/21_maj_2020_18_51_11.gpx");
 
 /**
  * ts-ignore's because the modules released on npm are outdated
@@ -53,8 +52,6 @@ const composeBounds = (routes: Routes, layers: RoutesLayers) => {
   }, null);
 };
 
-const markerCanvasRenderer = L.canvas();
-
 export const GpxLoader: React.FC = () => {
   const { map } = useLeaflet();
 
@@ -63,9 +60,12 @@ export const GpxLoader: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(addRoute("9_maj_2020_19_06_55_1589052909021.gpx", route1content));
-    // dispatch(addRoute('21_maj_2020_18_51_11.gpx', route2content));
-  }, []);
+    if (process.env.NODE_ENV !== "production") {
+      dispatch(
+        addRoute("9_maj_2020_19_06_55_1589052909021.gpx", route1content)
+      );
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     if (!map) {
@@ -109,7 +109,7 @@ export const GpxLoader: React.FC = () => {
       // Remove routes no longer present in state from the map
       layer.layers.remove();
     });
-  }, [map, routes, layers]);
+  }, [map, routes, layers, setGpx, dispatch]);
 
   useEffect(() => {
     if (!map) {
@@ -122,7 +122,7 @@ export const GpxLoader: React.FC = () => {
     if (bounds) {
       map.fitBounds(bounds);
     }
-  }, [map, routes]);
+  }, [layers, map, routes]);
 
   return null;
 };

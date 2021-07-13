@@ -1,4 +1,4 @@
-import L, { LatLng, Polyline } from "leaflet";
+import L, { LatLng } from "leaflet";
 
 export type Route = {
   id: string;

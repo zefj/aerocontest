@@ -1,11 +1,9 @@
-import React, { useEffect, useContext, useMemo } from "react";
+import { useEffect, useContext } from "react";
 import { useLeaflet } from "react-leaflet";
 
 import L, { Control, DrawEvents } from "leaflet";
 
 import "leaflet-draw";
-import { useSelector } from "react-redux";
-import { getTrack } from "../../state/track/trackReducer";
 import { RouteLayersContext } from "../../state/store";
 
 // const track = new L.FeatureGroup();
@@ -48,7 +46,7 @@ export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
     };
 
     drawControl = new L.Control.Draw(options);
-  }, [map]);
+  }, [map, trackLayer]);
 
   useEffect(() => {
     if (!map) {
@@ -56,7 +54,7 @@ export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
     }
 
     map.addLayer(trackLayer);
-  }, [map]);
+  }, [map, trackLayer]);
 
   useEffect(() => {
     if (!map) {
@@ -72,7 +70,7 @@ export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
     } else {
       map.removeControl(drawControl);
     }
-  }, [map, drawControl, drawingMode]);
+  }, [map, drawingMode]);
 
   useEffect(() => {
     if (!map) {
@@ -87,7 +85,7 @@ export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
 
       trackLayer.addLayer(layer);
     });
-  }, [map]);
+  }, [map, trackLayer]);
 
   return null;
 };

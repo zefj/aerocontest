@@ -17,8 +17,8 @@ const loadKmlFile = (url: string, cb: Function) => {
     req.overrideMimeType("text/xml");
   } catch (e) {}
   req.onreadystatechange = function () {
-    if (req.readyState != 4) return;
-    if (req.status == 200) cb(req.responseText);
+    if (req.readyState !== 4) return;
+    if (req.status === 200) cb(req.responseText);
   };
   req.send(null);
 };
@@ -31,8 +31,10 @@ export const KmlLoader: React.FC = () => {
   const track = useSelector(getTrack);
 
   useEffect(() => {
-    loadKmlFile(kmlFile, (content: string) => dispatch(loadTrack(content)));
-  }, []);
+    if (process.env.NODE_ENV !== "production") {
+      loadKmlFile(kmlFile, (content: string) => dispatch(loadTrack(content)));
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     if (!map) {
@@ -54,7 +56,7 @@ export const KmlLoader: React.FC = () => {
       .forEach((layer: any) => trackLayer.addLayer(layer));
 
     map.fireEvent("TRACK_LOADED");
-  }, [map, track.content]);
+  }, [map, track, trackLayer]);
 
   return null;
 };

@@ -34,7 +34,7 @@ export const RouteUploader = () => {
       const route = await readFile(file.data);
       dispatch(addRoute(file.name, route));
     });
-  }, []);
+  }, [dispatch]);
 
   return (
     <DragDrop

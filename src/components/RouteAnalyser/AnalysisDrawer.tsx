@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect } from "react";
-import L, { Polyline } from "leaflet";
+import L from "leaflet";
 
 import { useLeaflet } from "react-leaflet";
 import { useDispatch, useSelector } from "react-redux";
@@ -77,7 +77,7 @@ export const AnalysisDrawer = () => {
   const dispatch = useDispatch();
   const selectPolylineFn = useCallback(
     (id, analysisId) => dispatch(selectPolylineAction(id, analysisId)),
-    []
+    [dispatch]
   );
   const selectedPolyline = useSelector(getSelectedPolyline);
 
@@ -89,7 +89,7 @@ export const AnalysisDrawer = () => {
     for (let [key, route] of Object.entries(routes)) {
       const routeLayers = layers[route.id];
 
-      if (!routeLayers.gpx) {
+      if (!routeLayers?.gpx) {
         continue;
       }
 
@@ -119,7 +119,15 @@ export const AnalysisDrawer = () => {
         selectPolylineFn
       );
     }
-  }, [map, analyses, selectedPolyline]);
+  }, [
+    map,
+    analyses,
+    selectedPolyline,
+    routes,
+    layers,
+    trackEmpty,
+    selectPolylineFn,
+  ]);
 
   return null;
 };

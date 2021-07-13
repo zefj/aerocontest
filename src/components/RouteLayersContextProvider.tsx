@@ -60,7 +60,7 @@ export const RouteLayersContextProvider = ({
 
       setContext({ layers: newLayers, trackLayer, setGpx });
     },
-    [layers]
+    [layers, trackLayer]
   );
 
   const routes = useSelector(getRoutes);
@@ -85,7 +85,7 @@ export const RouteLayersContextProvider = ({
     }
 
     setContext({ layers: newLayers, trackLayer, setGpx });
-  }, [routes]);
+  }, [layers, routes, setGpx, trackLayer]);
 
   return (
     <RouteLayersContext.Provider value={{ layers, trackLayer, setGpx }}>

@@ -34,7 +34,7 @@ export const TrackUploader = () => {
       const track = await readFile(file.data);
       dispatch(loadTrack(track));
     });
-  }, []);
+  }, [dispatch]);
 
   return (
     <DragDrop

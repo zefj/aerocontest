@@ -21,7 +21,7 @@ const RouteNameInput = ({ defaultValue, onAccept }: RouteNameInputProps) => {
     if (input) {
       input.focus();
     }
-  }, [ref.current]);
+  }, []);
 
   return (
     <Input

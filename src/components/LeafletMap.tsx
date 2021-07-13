@@ -45,13 +45,13 @@ export const LeafletMap: React.FC = () => {
         />
         <ZoomControl position="topleft" />
         <ScaleControl position="bottomleft" imperial={false} />
+        <RouteAnalyser />
 
         <GpxLoader />
         <KmlLoader />
         <Route path="/track">
           {({ match }) => <TrackDrawer drawingMode={Boolean(match)} />}
         </Route>
-        <RouteAnalyser />
         <AnalysisDrawer />
       </Map>
     </div>

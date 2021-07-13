@@ -17,7 +17,6 @@ import {
   Routes,
 } from "../../types/routes";
 import { getRoutes } from "../../state/routes/routesReducer";
-import { getTrack } from "../../state/track/trackReducer";
 import { RouteLayersContext } from "../../state/store";
 
 const polygonToGeoJSON = (polygon: L.Layer) => {
@@ -147,7 +146,7 @@ const analyseRoutes = (
   }
 
   // TODO: switch to entries and drop layers argument
-  for (let [key, route] of Object.entries(entries)) {
+  for (let [, route] of Object.entries(entries)) {
     const routeLayers = layers[route.id];
 
     if (!routeLayers.gpx) {
@@ -225,7 +224,7 @@ export const RouteAnalyser: React.FC = () => {
     const analyses = analyseRoutes(routes, layers, trackLayer);
 
     dispatch(routesAnalysed(analyses));
-  }, [layers, routes, trackLayer]);
+  }, [dispatch, layers, map, routes, trackLayer]);
 
   useEffect(
     () => registerLeafletEventListeners(map, trackLayer, runAnalysis),

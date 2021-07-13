@@ -1,4 +1,3 @@
-import { GPX, Polyline } from "leaflet";
 import { RoutesAnalysis, RouteFragments } from "../../types/routes";
 
 export interface AddRouteAction {

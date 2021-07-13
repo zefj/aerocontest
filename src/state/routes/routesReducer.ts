@@ -1,4 +1,3 @@
-import L from "leaflet";
 import { v4 as uuidv4 } from "uuid";
 import { createSelector } from "reselect";
 
@@ -15,10 +14,8 @@ import {
 import {
   Route,
   RouteFragments,
-  RouteLayers,
   Routes,
   RoutesAnalysis,
-  RoutesLayers,
   Selected,
 } from "../../types/routes";
 import { ApplicationState } from "../store";
