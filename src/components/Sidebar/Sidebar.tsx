@@ -70,23 +70,13 @@ export const Sidebar: React.FC = () => {
                                 Wróć
                             </LinkButton>
 
-                            <LinkButton to="/track" variant="primary">
-                                Wyznacz trasę
-                            </LinkButton>
-                        </Route>
-
-                        <Route path="/track">
-                            <LinkButton to="/route" variant="secondaryOutline">
-                                Wróć
-                            </LinkButton>
-
                             <LinkButton to="/summary" variant="primary">
                                 Podsumowanie
                             </LinkButton>
                         </Route>
 
                         <Route path="/summary">
-                            <LinkButton to="/track" variant="secondaryOutline">
+                            <LinkButton to="/route" variant="secondaryOutline">
                                 Wróć
                             </LinkButton>
 
