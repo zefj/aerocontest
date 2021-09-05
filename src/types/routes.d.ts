@@ -33,7 +33,7 @@ export interface GPXLatLng extends LatLng {
 
 export type RouteFragment = {
   id: string;
-  type: "ontrack" | "offtrack";
+  type: "ontrack" | "offtrack" | "unknown";
   latLngs: GPXLatLng[];
 };
 

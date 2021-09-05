@@ -11,6 +11,7 @@ import {
   GPXLatLng,
   RouteFragments,
   Routes,
+  RouteFragment,
 } from "../types/routes";
 
 const polygonToGeoJSON = (polygon: L.Layer) => {
@@ -75,9 +76,13 @@ const performRouteAnalysis = (
   const fragments: RouteFragments = [];
 
   for (let i = 0; i < routeLatLngs.length; i++) {
-    const p = routeLatLngs[i] as GPXLatLng;
+    const currentPoint = routeLatLngs[i] as GPXLatLng;
+    const nextPoint = routeLatLngs[i + 1] as GPXLatLng;
+    const timeDelta = nextPoint
+      ? nextPoint?.meta.time.valueOf() - currentPoint.meta.time.valueOf()
+      : 0;
 
-    const pointOnTrack = analysePoint(p, track);
+    const pointOnTrack = analysePoint(currentPoint, track);
 
     let lastFragment = fragments[fragments.length - 1];
 
@@ -91,11 +96,21 @@ const performRouteAnalysis = (
       fragments.push(lastFragment);
     }
 
-    if (pointOnTrack) {
+    if (timeDelta > 10000) {
+      lastFragment.latLngs.push(currentPoint);
+      const fragment: RouteFragment = {
+        id: uuidv4(),
+        type: "unknown",
+        latLngs: [],
+      };
+      fragments.push(fragment);
+
+      fragment.latLngs.push(currentPoint);
+    } else if (pointOnTrack) {
       let fragment = lastFragment;
 
-      if (lastFragment.type === "offtrack") {
-        lastFragment.latLngs.push(p);
+      if (lastFragment.type === "offtrack" || lastFragment.type === "unknown") {
+        lastFragment.latLngs.push(currentPoint);
         fragment = {
           id: uuidv4(),
           type: "ontrack",
@@ -104,12 +119,12 @@ const performRouteAnalysis = (
         fragments.push(fragment);
       }
 
-      fragment.latLngs.push(p);
+      fragment.latLngs.push(currentPoint);
     } else {
       let fragment = lastFragment;
 
-      if (lastFragment.type === "ontrack") {
-        lastFragment.latLngs.push(p);
+      if (lastFragment.type === "ontrack" || lastFragment.type === "unknown") {
+        lastFragment.latLngs.push(currentPoint);
         fragment = {
           id: uuidv4(),
           type: "offtrack",
@@ -118,7 +133,7 @@ const performRouteAnalysis = (
         fragments.push(fragment);
       }
 
-      fragment.latLngs.push(p);
+      fragment.latLngs.push(currentPoint);
     }
   }
 

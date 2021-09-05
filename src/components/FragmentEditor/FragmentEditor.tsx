@@ -13,6 +13,7 @@ import {
 import { Box, Flex, Heading } from "rebass";
 import { space } from "../../styles/theme";
 import { Button } from "../Button";
+import { Alert } from "../Alert";
 import { RouteFragment } from "../../types/routes";
 
 export const calculateOfftrackInterval = (fragment: RouteFragment) => {
@@ -31,6 +32,13 @@ export const FragmentEditor = () => {
   const interval = calculateOfftrackInterval(selectedPolylineData);
   const start = moment(interval[0].meta.time);
   const end = moment(interval[1].meta.time);
+
+  const showOverrideOfftrackButton =
+    selectedPolylineData.type === "ontrack" ||
+    selectedPolylineData.type === "unknown";
+  const showOverrideOntrackButton =
+    selectedPolylineData.type === "offtrack" ||
+    selectedPolylineData.type === "unknown";
 
   return (
     <Box
@@ -67,13 +75,19 @@ export const FragmentEditor = () => {
               }}
             />
           </Flex>
-
           <Box variant="container">
             {start.format("HH:mm:ss")} - {end.format("HH:mm:ss")}
           </Box>
-
-          <Box sx={{ alignSelf: "flex-end" }}>
-            {selectedPolylineData.type === "offtrack" && (
+          {selectedPolylineData.type === "unknown" && (
+            <Alert icon="fa-fw fas fa-exclamation">
+              Fragment nieokreślony, ponieważ różnica pomiędzy sąsiadującymi
+              odczytami pozycji wynosi więcej niż 10 sekund. Domyślnie,
+              nieokreślone fragmenty są traktowane jako <b>poza trasą</b>.
+            </Alert>
+          )}
+          <Box variant="label">Zalicz jako:</Box>
+          <Flex>
+            {showOverrideOntrackButton && (
               <Button
                 variant="greenOutline"
                 onClick={() =>
@@ -85,11 +99,15 @@ export const FragmentEditor = () => {
                     )
                   )
                 }
+                sx={{
+                  width: "100%",
+                  marginRight: space["4"],
+                }}
               >
-                Zalicz jako w trasie
+                W trasie
               </Button>
             )}
-            {selectedPolylineData.type === "ontrack" && (
+            {showOverrideOfftrackButton && (
               <Button
                 variant="destructiveOutline"
                 onClick={() =>
@@ -101,11 +119,14 @@ export const FragmentEditor = () => {
                     )
                   )
                 }
+                sx={{
+                  width: "100%",
+                }}
               >
-                Zalicz jako poza trasą
+                Poza trasą
               </Button>
             )}
-          </Box>
+          </Flex>
         </Flex>
       </Box>
     </Box>

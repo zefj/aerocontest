@@ -8,16 +8,33 @@ import {
   getRoutesAnalysis,
   getSelectedPolyline,
 } from "../../state/routes/routesReducer";
-import { RouteLayers, RouteFragments, Selected } from "../../types/routes";
+import {
+  RouteLayers,
+  RouteFragments,
+  Selected,
+  RouteFragment,
+} from "../../types/routes";
 import { getPolylineLayer } from "../../utils/getPolylineLayer";
 import {
   ROUTE_LINE_HOVER,
   ROUTE_LINE_STYLE_BASE,
   ROUTE_LINE_STYLE_OFFTRACK,
   ROUTE_LINE_STYLE_ONTRACK,
+  ROUTE_LINE_STYLE_UNKNOWN,
 } from "../leafletElementStyles";
 import { selectPolyline as selectPolylineAction } from "../../state/routes/routesActions";
 import { RouteLayersContext } from "../../state/store";
+
+const getRouteLineStyle = (type: RouteFragment["type"]) => {
+  switch (type) {
+    case "ontrack":
+      return ROUTE_LINE_STYLE_ONTRACK;
+    case "offtrack":
+      return ROUTE_LINE_STYLE_OFFTRACK;
+    default:
+      return ROUTE_LINE_STYLE_UNKNOWN;
+  }
+};
 
 const drawFragments = (
   analysisId: string,
@@ -34,9 +51,7 @@ const drawFragments = (
   fragments.forEach((fragment) => {
     const style = {
       ...ROUTE_LINE_STYLE_BASE,
-      ...(fragment.type === "ontrack"
-        ? ROUTE_LINE_STYLE_ONTRACK
-        : ROUTE_LINE_STYLE_OFFTRACK),
+      ...getRouteLineStyle(fragment.type),
       ...(selectedPolyline?.id === fragment.id ? ROUTE_LINE_HOVER : {}),
     };
 

@@ -232,7 +232,30 @@ const preset = {
       overflowX: "hidden",
     },
     container: {
-      marginBottom: space["24"],
+      marginBottom: space["16"],
+    },
+    label: {
+      marginBottom: space["4"],
+    },
+    description: {
+      marginBottom: space["16"],
+    },
+    alert: {
+      marginBottom: space["16"],
+      iconContainer: {
+        borderRadius: "50%",
+        backgroundColor: palette["yellow-300"],
+        width: fontSize["24"],
+        height: fontSize["24"],
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: space["8"],
+      },
+      icon: {
+        color: palette["yellow-800"],
+        boxShadow: 0,
+        padding: 0,
+      },
     },
     link: {
       color: "primary",
