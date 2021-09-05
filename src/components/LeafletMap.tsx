@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { Map, TileLayer, ZoomControl, ScaleControl } from 'react-leaflet'
+import { Map, TileLayer, ZoomControl, ScaleControl, LayersControl } from 'react-leaflet'
 import { LatLngExpression } from 'leaflet';
-import { Route } from 'react-router';
 
 import './LeafletMap.scss';
 import { GpxLoader } from './GpxLoader';
@@ -35,10 +34,20 @@ export const LeafletMap: React.FC = () => {
     return (
         <div className="map-container">
             <Map center={position} zoom={zoom} zoomControl={false} preferCanvas={PREFER_CANVAS}>
-                <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
+                <LayersControl position="topright">
+                    <LayersControl.BaseLayer checked name="Mapa">
+                        <TileLayer
+                            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                    </LayersControl.BaseLayer>
+                    <LayersControl.BaseLayer name="Satelita">
+                        <TileLayer
+                            attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                        />
+                    </LayersControl.BaseLayer>
+                </LayersControl>
                 <ZoomControl position="topleft" />
                 <ScaleControl position="bottomleft" imperial={false} />
 
