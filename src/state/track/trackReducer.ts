@@ -9,7 +9,7 @@ const initialState: TrackState = {
   content: "",
 };
 
-type TrackReducerActions = LoadTrackAction;
+export type TrackReducerActions = LoadTrackAction;
 
 export const trackReducer = (
   state = initialState,

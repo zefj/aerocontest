@@ -1,9 +1,18 @@
 import React from "react";
 import L from "leaflet";
 import { applyMiddleware, createStore, combineReducers } from "redux";
-import { routesReducer, RoutesState } from "./routes/routesReducer";
+import thunk from "redux-thunk";
+import {
+  routesReducer,
+  RoutesReducerActions,
+  RoutesState,
+} from "./routes/routesReducer";
 import { composeWithDevTools } from "redux-devtools-extension";
-import { trackReducer, TrackState } from "./track/trackReducer";
+import {
+  trackReducer,
+  TrackReducerActions,
+  TrackState,
+} from "./track/trackReducer";
 import { RouteLayersContextType } from "../types/context";
 
 export interface ApplicationState {
@@ -11,13 +20,15 @@ export interface ApplicationState {
   track: TrackState;
 }
 
+export type Actions = TrackReducerActions | RoutesReducerActions;
+
 const rootReducer = combineReducers<ApplicationState>({
   routes: routesReducer,
   track: trackReducer,
 });
 
 export const configureStore = () => {
-  const middlewares: never[] = [];
+  const middlewares = [thunk];
   const middlewareEnhancer = applyMiddleware(...middlewares);
 
   const enhancers = [middlewareEnhancer];

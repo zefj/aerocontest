@@ -74,7 +74,6 @@ export const exportData = async (
     }
   });
 
-  // write to a new buffer
   const buffer = await workbook.xlsx.writeBuffer();
   download(buffer);
 };

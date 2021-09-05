@@ -28,7 +28,7 @@ const createRoute = (name: string, content: string): Route => {
   };
 };
 
-type RoutesReducerActions =
+export type RoutesReducerActions =
   | AddRouteAction
   | RemoveRouteAction
   | RouteParsedAction

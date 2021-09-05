@@ -1,4 +1,12 @@
-import { RoutesAnalysis, RouteFragments } from "../../types/routes";
+import { ThunkAction } from "redux-thunk";
+import {
+  RoutesAnalysis,
+  RouteFragments,
+  RoutesLayers,
+} from "../../types/routes";
+import { Actions, ApplicationState } from "../store";
+import { getRoutes } from "./routesReducer";
+import { analyseRoutes as runRouteAnalysis } from "../../utils/analyseRoutes";
 
 export interface AddRouteAction {
   type: "ADD_ROUTE";
@@ -74,6 +82,19 @@ export const routeParsed = (id: string): RouteParsedAction => ({
   type: "ROUTE_PARSED",
   payload: { id },
 });
+
+export const analyseRoutes =
+  (
+    layers: RoutesLayers,
+    trackLayer: L.FeatureGroup
+  ): ThunkAction<void, ApplicationState, undefined, Actions> =>
+  (dispatch, getState) => {
+    const state = getState();
+    const routes = getRoutes(state);
+
+    const analyses = runRouteAnalysis(routes, layers, trackLayer);
+    dispatch(routesAnalysed(analyses));
+  };
 
 export const routeAnalysed = (
   id: string,
