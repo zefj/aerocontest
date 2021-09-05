@@ -1,63 +1,95 @@
-import React, { ReactNode, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import L from "leaflet";
-import { RouteLayers } from '../types/routes';
-import { getRoutes } from '../state/routes/routesReducer';
-import { RouteLayersContextType } from '../types/context';
-import { RouteLayersContext } from '../state/store';
+import { RouteLayers } from "../types/routes";
+import { getRoutes } from "../state/routes/routesReducer";
+import { RouteLayersContextType } from "../types/context";
+import { RouteLayersContext } from "../state/store";
 
 const createLayers = (): RouteLayers => {
-    const layers = new L.FeatureGroup();
-    const markers = new L.LayerGroup();
-    const offtrackFragmentsLayer = new L.LayerGroup();
-    const offtrackMarkersLayer = new L.FeatureGroup();
-    const ontrackFragmentsLayer = new L.LayerGroup();
-    const ontrackMarkersLayer = new L.FeatureGroup();
+  const layers = new L.FeatureGroup();
+  const markers = new L.LayerGroup();
+  const offtrackFragmentsLayer = new L.LayerGroup();
+  const offtrackMarkersLayer = new L.FeatureGroup();
+  const ontrackFragmentsLayer = new L.LayerGroup();
+  const ontrackMarkersLayer = new L.FeatureGroup();
 
-    markers.addTo(layers);
-    offtrackFragmentsLayer.addTo(layers);
-    offtrackMarkersLayer.addTo(layers);
-    ontrackFragmentsLayer.addTo(layers);
-    ontrackMarkersLayer.addTo(layers);
+  markers.addTo(layers);
+  offtrackFragmentsLayer.addTo(layers);
+  offtrackMarkersLayer.addTo(layers);
+  ontrackFragmentsLayer.addTo(layers);
+  ontrackMarkersLayer.addTo(layers);
 
-    return {
-        markers,
-        layers,
-        offtrackFragmentsLayer,
-        offtrackMarkersLayer,
-        ontrackFragmentsLayer,
-        ontrackMarkersLayer,
-    };
+  return {
+    markers,
+    layers,
+    offtrackFragmentsLayer,
+    offtrackMarkersLayer,
+    ontrackFragmentsLayer,
+    ontrackMarkersLayer,
+    gpx: null,
+  };
 };
 
-export const RouteLayersContextProvider = ({ children }: { children: ReactNode }) => {
-    const [context, setContext] = useState<RouteLayersContextType>({});
-    const routes = useSelector(getRoutes);
+const emptyTrackLayer = new L.FeatureGroup();
 
-    useEffect(() => {
-        let shouldUpdate = false;
-        const newContext = {
-            ...context
-        };
+export const RouteLayersContextProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  const [{ layers, trackLayer }, setContext] = useState<RouteLayersContextType>(
+    {
+      layers: {},
+      trackLayer: emptyTrackLayer,
+      setGpx: () => {},
+    }
+  );
 
-        Object.entries(routes).forEach(([_key, route]) => {
-            if (context[route.id]) {
-                return;
-            }
+  const setGpx = useCallback(
+    (id, gpx) => {
+      const newLayers = {
+        ...layers,
+      };
 
-            shouldUpdate = true;
-            newContext[route.id] = createLayers();
-        });
+      if (!layers[id]) {
+        return;
+      }
 
-        if (!shouldUpdate) {
-            return;
-        }
+      newLayers[id].gpx = gpx;
 
-        setContext(newContext);
-    }, [routes]);
+      setContext({ layers: newLayers, trackLayer, setGpx });
+    },
+    [layers, trackLayer]
+  );
 
+  const routes = useSelector(getRoutes);
 
-    return (
-        <RouteLayersContext.Provider value={context}>{children}</RouteLayersContext.Provider>
-    );
+  useEffect(() => {
+    let shouldUpdate = false;
+    const newLayers = {
+      ...layers,
+    };
+
+    Object.entries(routes).forEach(([_key, route]) => {
+      if (layers[route.id]) {
+        return;
+      }
+
+      shouldUpdate = true;
+      newLayers[route.id] = createLayers();
+    });
+
+    if (!shouldUpdate) {
+      return;
+    }
+
+    setContext({ layers: newLayers, trackLayer, setGpx });
+  }, [layers, routes, setGpx, trackLayer]);
+
+  return (
+    <RouteLayersContext.Provider value={{ layers, trackLayer, setGpx }}>
+      {children}
+    </RouteLayersContext.Provider>
+  );
 };

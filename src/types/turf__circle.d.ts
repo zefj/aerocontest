@@ -1,1 +1,1 @@
-declare module '@turf/circle';
+declare module "@turf/circle";

@@ -1,3 +1,8 @@
+import L from "leaflet";
+import { RoutesLayers } from "./routes";
+
 export type RouteLayersContextType = {
-    [id: string]: RouteLayers
-}
+  layers: RoutesLayers;
+  trackLayer: L.FeatureGroup;
+  setGpx: (id, gpx) => void;
+};
