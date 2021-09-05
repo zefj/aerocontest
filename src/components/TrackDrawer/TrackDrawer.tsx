@@ -25,11 +25,7 @@ import { getTrack } from '../../state/track/trackReducer';
 
 let drawControl: L.Control.Draw | null;
 
-type TrackDrawerProps = {
-    drawingMode?: boolean,
-}
-
-export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
+export const TrackDrawer = () => {
     const { map } = useLeaflet();
     const { layer: trackLayer } = useSelector(getTrack);
 
@@ -66,12 +62,8 @@ export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
             return;
         }
 
-        if (drawingMode) {
-            map.addControl(drawControl);
-        } else {
-            map.removeControl(drawControl);
-        }
-    }, [map, drawControl, drawingMode]);
+        map.addControl(drawControl);
+    }, [map, drawControl]);
 
     useEffect(() => {
         if (!map) {

@@ -7,7 +7,7 @@ import L from 'leaflet';
 import 'leaflet-kml';
 import { loadTrack } from '../state/track/trackActions';
 
-const kmlFile = require('../test-data/doc.kml');
+const kmlFile = require('../test-data/WOJTEK.kml');
 
 const loadKmlFile = (url: string, cb: Function) => {
     var req = new window.XMLHttpRequest();

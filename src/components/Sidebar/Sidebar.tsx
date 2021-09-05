@@ -8,7 +8,6 @@ import './sidebar.css';
 import { Box, Flex, Heading, Text } from 'rebass';
 import { WelcomeStep } from '../WelcomeStep/WelcomeStep';
 import { ExternalLinkButton, LinkButton } from '../Button';
-import { TrackStep } from '../TrackStep/TrackStep';
 import { SummaryStep } from '../SummaryStep/SummaryStep';
 
 export const Sidebar: React.FC = () => {
@@ -50,10 +49,6 @@ export const Sidebar: React.FC = () => {
 
                         <Route path="/route">
                             <RouteStep />
-                        </Route>
-
-                        <Route path="/track">
-                            <TrackStep />
                         </Route>
 
                         <Route path="/summary">

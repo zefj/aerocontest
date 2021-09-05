@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Heading, Text } from 'rebass';
 
-import { RouteUploader } from './RouteUploader';
+import { Uploader } from '../Uploader/Uploader';
 import { RouteRecord } from './RouteRecord';
 import { useSelector } from 'react-redux';
 import { getRoutes } from '../../state/routes/routesReducer';
@@ -13,7 +13,7 @@ export const RouteStep: React.FC = () => {
     return (
         <>
             <Box variant="container">
-                <RouteUploader />
+                <Uploader />
             </Box>
 
             {amountOfRoutes > 0 && (

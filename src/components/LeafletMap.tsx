@@ -44,15 +44,10 @@ export const LeafletMap: React.FC = () => {
 
                 <GpxLoader />
                 <KmlLoader />
-                <Route path="/track">
-                    {({ match }) => (
-                        <TrackDrawer drawingMode={Boolean(match)} />
-                    )}
-                </Route>
+                <TrackDrawer />
                 <RouteAnalyser />
                 <AnalysisDrawer />
                 <PolylinePopup />
-
             </Map>
         </div>
     )

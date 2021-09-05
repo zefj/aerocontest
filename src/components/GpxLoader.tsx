@@ -16,6 +16,7 @@ import { RouteLayersContext } from '../state/store';
 
 const route1content = require('../test-data/9_maj_2020_19_06_55_1589052909021.gpx');
 const route2content = require('../test-data/21_maj_2020_18_51_11.gpx');
+const route3content = require('../test-data/3_lip_2020_19_43_42_1593804563614.gpx');
 
 /**
  * ts-ignore's because the modules released on npm are outdated
@@ -61,7 +62,7 @@ export const GpxLoader: React.FC = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(addRoute('9_maj_2020_19_06_55_1589052909021.gpx', route1content));
+        dispatch(addRoute('3_lip_2020_19_43_42_1593804563614.gpx', route3content));
         // dispatch(addRoute('21_maj_2020_18_51_11.gpx', route2content));
     }, []);
 

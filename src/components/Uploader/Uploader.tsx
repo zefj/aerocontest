@@ -6,11 +6,12 @@ import '@uppy/core/dist/style.css'
 import '@uppy/drag-drop/dist/style.css'
 import { useDispatch } from 'react-redux';
 import { addRoute } from '../../state/routes/routesActions';
+import { loadTrack } from '../../state/track/trackActions';
 
 const uppy = Uppy({
     autoProceed: true,
     restrictions: {
-        allowedFileTypes: ['.gpx'],
+        allowedFileTypes: ['.gpx', '.kml'],
     }
 });
 
@@ -25,14 +26,20 @@ const readFile = (file: File): Promise<string> => {
     })
 };
 
-export const RouteUploader = () => {
+export const Uploader = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
         uppy.on('file-added', async (file) => {
+            console.info(file);
             // TODO: handle error state
-            const route = await readFile(file.data);
-            dispatch(addRoute(file.name, route));
+            const content = await readFile(file.data);
+
+            if (file.extension === "gpx") {
+                dispatch(addRoute(file.name, content));
+            } else if (file.extension === "kml") {
+                dispatch(loadTrack(content));
+            }
         });
     }, []);
 
@@ -41,7 +48,7 @@ export const RouteUploader = () => {
             uppy={uppy}
             locale={{
                 strings: {
-                    dropHereOr: 'Przeciągnij i upuść pliki lub %{browse}',
+                    dropHereOr: 'Przeciągnij i upuść pliki lub %{browse} (dozwolone formaty: .gpx, .kml)',
                     browse: 'przeglądaj'
                 }
             }}
