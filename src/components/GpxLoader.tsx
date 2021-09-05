@@ -60,7 +60,7 @@ export const GpxLoader: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.REACT_APP_EXAMPLE_DATA === "true") {
       dispatch(
         addRoute("9_maj_2020_19_06_55_1589052909021.gpx", route1content)
       );

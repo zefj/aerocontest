@@ -31,7 +31,7 @@ export const KmlLoader: React.FC = () => {
   const track = useSelector(getTrack);
 
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.REACT_APP_EXAMPLE_DATA === "true") {
       loadKmlFile(kmlFile, (content: string) => dispatch(loadTrack(content)));
     }
   }, [dispatch]);
