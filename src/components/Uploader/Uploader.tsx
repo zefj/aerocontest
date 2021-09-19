@@ -37,6 +37,8 @@ export const Uploader = () => {
 
       if (file.extension === "gpx") {
         dispatch(addRoute(file.name, content));
+        // This is kind of a hack to allow duplicates and handle the case when a route is removed
+        uppy.removeFile(file.id);
       } else if (file.extension === "kml") {
         dispatch(loadTrack(content));
       }
