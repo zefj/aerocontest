@@ -135,7 +135,7 @@ export const deselectPolyline = () => ({
 export const overrideAnalysis = (
   id: string,
   analysisId: string,
-  type: "ontrack" | "offtrack"
+  type: "ontrack" | "offtrack" | "unknown"
 ) => ({
   type: "OVERRIDE_ANALYSIS",
   payload: { id, analysisId, type },

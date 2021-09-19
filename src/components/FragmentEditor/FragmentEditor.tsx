@@ -39,6 +39,9 @@ export const FragmentEditor = () => {
   const showOverrideOntrackButton =
     selectedPolylineData.type === "offtrack" ||
     selectedPolylineData.type === "unknown";
+  const showOverrideUnknownButton =
+    selectedPolylineData.type === "offtrack" ||
+    selectedPolylineData.type === "ontrack";
 
   return (
     <Box
@@ -80,9 +83,10 @@ export const FragmentEditor = () => {
           </Box>
           {selectedPolylineData.type === "unknown" && (
             <Alert icon="fa-fw fas fa-exclamation">
-              Fragment nieokreślony, ponieważ różnica pomiędzy sąsiadującymi
-              odczytami pozycji wynosi więcej niż 10 sekund. Domyślnie,
-              nieokreślone fragmenty są traktowane jako <b>poza trasą</b>.
+              Gdy różnica pomiędzy kolejnymi odczytami pozycji wynosi więcej niż
+              10 sekund, fragment jest automatycznie zaliczany jako{" "}
+              <b>Brak GPS</b>. Podczas analizy, te fragmenty traktowane są jako{" "}
+              <b>poza trasą</b>.
             </Alert>
           )}
           <Box variant="label">Zalicz jako:</Box>
@@ -121,9 +125,29 @@ export const FragmentEditor = () => {
                 }
                 sx={{
                   width: "100%",
+                  marginRight: space["4"],
                 }}
               >
                 Poza trasą
+              </Button>
+            )}
+            {showOverrideUnknownButton && (
+              <Button
+                variant="grayOutline"
+                onClick={() =>
+                  dispatch(
+                    overrideAnalysis(
+                      selectedPolyline.id,
+                      selectedPolyline.analysis_id,
+                      "unknown"
+                    )
+                  )
+                }
+                sx={{
+                  width: "100%",
+                }}
+              >
+                Brak GPS
               </Button>
             )}
           </Flex>

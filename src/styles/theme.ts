@@ -343,6 +343,14 @@ const preset = {
         bg: palette["red-600"],
       },
     },
+    grayOutline: {
+      variant: "buttons.outline",
+      color: palette["cool-grey-500"],
+      ":hover:not(.active), :focus:not(.active)": {
+        color: palette["cool-grey-700"],
+        bg: palette["cool-grey-100"],
+      },
+    },
     icon: {
       variant: "buttons.outline",
       color: "muted",
