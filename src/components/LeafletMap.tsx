@@ -57,6 +57,9 @@ export const LeafletMap: React.FC = () => {
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             />
           </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Bez mapy">
+            <TileLayer url="" />
+          </LayersControl.BaseLayer>
         </LayersControl>
         <ZoomControl position="topleft" />
         <ScaleControl position="bottomleft" imperial={false} />
