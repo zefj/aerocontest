@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Map, TileLayer, ZoomControl, ScaleControl, LayersControl } from "react-leaflet";
+import {
+  Map,
+  TileLayer,
+  ZoomControl,
+  ScaleControl,
+  LayersControl,
+} from "react-leaflet";
 import { LatLngExpression } from "leaflet";
 
 import "./LeafletMap.scss";
@@ -39,18 +45,18 @@ export const LeafletMap: React.FC = () => {
         preferCanvas={PREFER_CANVAS}
       >
         <LayersControl position="topright">
-            <LayersControl.BaseLayer checked name="Mapa">
-                <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-            </LayersControl.BaseLayer>
-            <LayersControl.BaseLayer name="Satelita">
-                <TileLayer
-                    attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                />
-            </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer checked name="Mapa">
+            <TileLayer
+              attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Satelita">
+            <TileLayer
+              attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            />
+          </LayersControl.BaseLayer>
         </LayersControl>
         <ZoomControl position="topleft" />
         <ScaleControl position="bottomleft" imperial={false} />
@@ -58,7 +64,7 @@ export const LeafletMap: React.FC = () => {
 
         <GpxLoader />
         <KmlLoader />
-        <TrackDrawer />
+        <TrackDrawer drawingMode={true} />
         <AnalysisDrawer />
       </Map>
     </div>

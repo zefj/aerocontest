@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 
 import { GPX } from "leaflet";
 import { Box, Flex, Heading, Text } from "rebass";
@@ -14,8 +15,10 @@ import {
 } from "../Table";
 import {
   AnalysisData,
+  AnalysisDataOfftrackIntervals,
   gatherAnalysisData,
 } from "../../utils/gatherAnalysisData";
+import { getSelectedPolyline } from "../../state/routes/routesReducer";
 
 const RouteName = ({ name }: { name: string }) => {
   return (
@@ -148,7 +151,38 @@ const RouteData = ({ data }: { data: AnalysisData }) => {
   );
 };
 
+const AnalysisRow = ({
+  interval,
+  isSelected,
+}: {
+  interval: AnalysisDataOfftrackIntervals;
+  isSelected: boolean;
+}) => {
+  const ref = useRef<HTMLTableRowElement>(null);
+
+  useEffect(() => {
+    if (isSelected && ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [isSelected]);
+
+  return (
+    <TableRow
+      ref={ref}
+      key={`offtrack-interval-${interval.id}`}
+      variant={isSelected ? "highlightedRow" : undefined}
+    >
+      <TableDataCell>{interval.index}</TableDataCell>
+      <TableDataCell>{interval.start}</TableDataCell>
+      <TableDataCell>{interval.end}</TableDataCell>
+      <TableDataCell>{interval.duration}</TableDataCell>
+    </TableRow>
+  );
+};
+
 const RouteAnalysisTable = ({ data }: { data: AnalysisData }) => {
+  const selectedPolyline = useSelector(getSelectedPolyline);
+
   return (
     <Table>
       <TableHead>
@@ -162,12 +196,10 @@ const RouteAnalysisTable = ({ data }: { data: AnalysisData }) => {
       <TableBody>
         {data.offtrackIntervals.map((interval) => {
           return (
-            <TableRow key={interval.index}>
-              <TableDataCell>{interval.index}</TableDataCell>
-              <TableDataCell>{interval.start}</TableDataCell>
-              <TableDataCell>{interval.end}</TableDataCell>
-              <TableDataCell>{interval.duration}</TableDataCell>
-            </TableRow>
+            <AnalysisRow
+              interval={interval}
+              isSelected={selectedPolyline?.id === interval.id}
+            />
           );
         })}
 

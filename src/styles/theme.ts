@@ -289,6 +289,10 @@ const preset = {
       borderBottom: "solid 1px",
       borderColor: palette["cool-grey-100"],
     },
+    highlightedRow: {
+      fontWeight: "bold",
+      backgroundColor: palette["cool-grey-100"],
+    },
   },
   buttons: {
     primary: {

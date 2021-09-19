@@ -3,6 +3,7 @@ import moment from "moment";
 import { GPXLatLng, RouteFragments } from "../types/routes";
 
 export type AnalysisDataOfftrackIntervals = {
+  id: string;
   index: number;
   start: string;
   end: string;
@@ -22,6 +23,13 @@ export type AnalysisData = {
   offtrackIntervalsSum: string;
 };
 
+type OfftrackInterval = {
+  id: string;
+  intervals: [GPXLatLng, GPXLatLng];
+};
+
+type OfftrackIntervals = Array<OfftrackInterval>;
+
 // TODO: milliseconds should probably be rounded off, to avoid issues with comparison (30.000 - 20.999 = 21)
 // maybe not necessarily here though, maybe somewhere closer to route analysis?
 // TODO: does not handle diffs larger than 24 hours, figure out a better solution
@@ -37,19 +45,27 @@ const calculateOfftrackIntervals = (analysis: RouteFragments) => {
   return analysis
     .map((value) => {
       if (value.type === "ontrack") {
-        return [];
+        return null;
       }
 
-      return [value.latLngs[0], value.latLngs[value.latLngs.length - 1]];
+      const intervals: [GPXLatLng, GPXLatLng] = [
+        value.latLngs[0],
+        value.latLngs[value.latLngs.length - 1],
+      ];
+
+      return {
+        id: value.id,
+        intervals,
+      };
     })
-    .filter((e) => e.length);
+    .filter((value) => value !== null) as OfftrackIntervals;
 };
 
-const sumOfftrackIntervals = (offtrackIntervals: GPXLatLng[][]) => {
+const sumOfftrackIntervals = (offtrackIntervals: OfftrackIntervals) => {
   const secondsSum = offtrackIntervals.reduce(
-    (carry: number, value: GPXLatLng[]) => {
-      const start = moment(value[0].meta.time);
-      const end = moment(value[1].meta.time);
+    (carry: number, { intervals }: OfftrackInterval) => {
+      const start = moment(intervals[0].meta.time);
+      const end = moment(intervals[1].meta.time);
       const diff = end.diff(start);
 
       carry += diff;
@@ -99,12 +115,13 @@ export const gatherAnalysisData = (
     totalSpeed: `${get_total_speed.toFixed(2)} km/h`,
     elevationMin: `${get_elevation_min} m`,
     elevationMax: `${get_elevation_max} m`,
-    offtrackIntervals: offtrackIntervals.map((interval, index) => {
-      const start = moment(interval[0].meta.time);
-      const end = moment(interval[1].meta.time);
+    offtrackIntervals: offtrackIntervals.map(({ id, intervals }, index) => {
+      const start = moment(intervals[0].meta.time);
+      const end = moment(intervals[1].meta.time);
 
       return {
         index: index + 1,
+        id,
         start: start.format("HH:mm:ss"),
         end: end.format("HH:mm:ss"),
         duration: getFormattedDurationLength(start, end),
