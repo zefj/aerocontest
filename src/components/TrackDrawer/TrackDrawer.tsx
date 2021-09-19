@@ -41,6 +41,7 @@ export const TrackDrawer = ({ drawingMode = false }: TrackDrawerProps) => {
         circlemarker: false,
       },
       edit: {
+        edit: false,
         featureGroup: trackLayer,
       },
     };
