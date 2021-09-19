@@ -7,7 +7,6 @@ import { RouteStep } from "../RouteStep/RouteStep";
 
 import "./sidebar.css";
 import { Box, Flex, Heading, Text } from "rebass";
-import { WelcomeStep } from "../WelcomeStep/WelcomeStep";
 import { Button, ExternalLinkButton, LinkButton } from "../Button";
 import { SummaryStep } from "../SummaryStep/SummaryStep";
 
@@ -57,11 +56,7 @@ export const Sidebar: React.FC = () => {
 
         <Box variant="content">
           <Switch>
-            <Route path="/(welcome|)">
-              <WelcomeStep />
-            </Route>
-
-            <Route path="/route">
+            <Route path="/(route|)">
               <RouteStep />
             </Route>
 
@@ -73,17 +68,7 @@ export const Sidebar: React.FC = () => {
 
         <Flex as="nav" variant="nav">
           <Switch>
-            <Route path="/(welcome|)">
-              <LinkButton to="/route" variant="primary">
-                Zaczynamy
-              </LinkButton>
-            </Route>
-
             <Route path="/(route|)">
-              <LinkButton to="/welcome" variant="secondaryOutline">
-                Wróć
-              </LinkButton>
-
               <LinkButton to="/summary" variant="primary">
                 Podsumowanie
               </LinkButton>
