@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/aerocontest/precache-manifest.2c639acd480713312fa79c31d887e774.js"
+  "/aerocontest/precache-manifest.e6899bcb265e405b722f7c908b9f558c.js"
 );
 
 self.addEventListener('message', (event) => {
