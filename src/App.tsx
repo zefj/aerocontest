@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import L from "leaflet";
 
 // For some reason, if any scss file is included before plain css files, the style tags rendered
@@ -41,6 +41,8 @@ L.Icon.Default.mergeOptions({
 const store = configureStore();
 
 const App: React.FC = () => {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
@@ -55,8 +57,11 @@ const App: React.FC = () => {
           {/* TODO: do it like this: https://turbo87.github.io/sidebar-v2/examples/ */}
           <HashRouter>
             <RouteLayersContextProvider>
-              <Sidebar />
-              <FragmentEditor />
+              <Sidebar
+                sidebarCollapsed={sidebarCollapsed}
+                setSidebarCollapsed={setSidebarCollapsed}
+              />
+              <FragmentEditor sidebarCollapsed={sidebarCollapsed} />
               <LeafletMap />
             </RouteLayersContextProvider>
           </HashRouter>

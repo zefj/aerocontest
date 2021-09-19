@@ -1,8 +1,19 @@
 .sidebar {
   width: 450px;
   padding: 10px 0 10px 10px;
+
+  transition: width 100ms ease-in-out;
+}
+
+.sidebar.collapsed {
+  width: 60px;
 }
 
 .sidebar ~ .map-container .leaflet-left {
+  transition: left 100ms ease-in-out;
   left: 450px;
+}
+
+.sidebar.collapsed ~ .map-container .leaflet-left {
+  left: 60px;
 }

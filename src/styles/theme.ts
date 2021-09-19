@@ -367,6 +367,16 @@ const preset = {
         color: "primary",
       },
     },
+    chevron: {
+      variant: "buttons.outline",
+      padding: 0,
+      boxShadow: 0,
+      fontSize: fontSize["24"],
+      color: "muted",
+      ":hover:not(.active), :focus:not(.active)": {
+        color: "primary",
+      },
+    },
   },
 };
 

@@ -20,7 +20,11 @@ export const calculateOfftrackInterval = (fragment: RouteFragment) => {
   return [fragment.latLngs[0], fragment.latLngs[fragment.latLngs.length - 1]];
 };
 
-export const FragmentEditor = () => {
+export const FragmentEditor = ({
+  sidebarCollapsed,
+}: {
+  sidebarCollapsed: boolean;
+}) => {
   const dispatch = useDispatch();
   const selectedPolyline = useSelector(getSelectedPolyline);
   const selectedPolylineData = useSelector(findSelectedPolyline);
@@ -46,13 +50,15 @@ export const FragmentEditor = () => {
   return (
     <Box
       variant="popup"
+      className="fragmentEditor"
       sx={{
         position: "absolute",
         zIndex: 500,
         width: "100%",
         maxWidth: "300px",
-        left: "500px",
+        left: sidebarCollapsed ? "110px" : "500px",
         top: "0",
+        transition: "left 100ms ease-in-out",
       }}
     >
       <Box variant="content">
