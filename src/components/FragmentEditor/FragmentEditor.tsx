@@ -91,8 +91,7 @@ export const FragmentEditor = ({
             <Alert icon="fa-fw fas fa-exclamation">
               Gdy różnica pomiędzy kolejnymi odczytami pozycji wynosi więcej niż
               10 sekund, fragment jest automatycznie zaliczany jako{" "}
-              <b>Brak GPS</b>. Podczas analizy, te fragmenty traktowane są jako{" "}
-              <b>poza trasą</b>.
+              <b>Brak GPS</b>.
             </Alert>
           )}
           <Box variant="label">Zalicz jako:</Box>

@@ -44,7 +44,7 @@ const getFormattedDurationLength = (
 const calculateOfftrackIntervals = (analysis: RouteFragments) => {
   return analysis
     .map((value) => {
-      if (value.type === "ontrack") {
+      if (value.type === "ontrack" || value.type === "unknown") {
         return null;
       }
 
